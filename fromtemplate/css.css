@@ -1,9 +1,9 @@
 /* ==========================================================================
-   Parallax Starter - Free HTML CSS Template
+   bar Starter - Free HTML CSS Template
    
-TemplateMo 612 Parallax Starter
+foo 612 bar Starter
 
-https://templatemo.com/tm-612-parallax-starter
+https://foo.com/tm-612-bar-starter
 
    ========================================================================== */
 
@@ -53,7 +53,7 @@ img {
 }
 
 /* --- Navigation --- */
-#templatemo-nav {
+#foo-nav {
     position: fixed;
     top: 0;
     left: 0;
@@ -65,7 +65,7 @@ img {
     transition: background var(--transition-smooth);
 }
 
-#templatemo-nav.scrolled {
+#foo-nav.scrolled {
     background: var(--nav-bg-scrolled);
 }
 
@@ -126,8 +126,8 @@ img {
     transition: all var(--transition-smooth);
 }
 
-/* --- Parallax Sections --- */
-.parallax-section {
+/* --- bar Sections --- */
+.bar-section {
     position: relative;
     min-height: 100vh;
     display: flex;
@@ -136,10 +136,10 @@ img {
     overflow: hidden;
 }
 
-/* Parallax Background Image Layer
+/* bar Background Image Layer
    Height is 200% and starts at top: -50% to give
    maximum room for large vertical translations */
-.parallax-bg {
+.bar-bg {
     position: absolute;
     top: -50%;
     left: 0;
@@ -154,18 +154,18 @@ img {
 }
 
 /* Dark Overlay */
-.parallax-overlay {
+.bar-overlay {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.42);
     z-index: 1;
 }
 
-.parallax-overlay.overlay-dark {
+.bar-overlay.overlay-dark {
     background: rgba(0, 0, 0, 0.55);
 }
 
-.parallax-overlay.overlay-medium {
+.bar-overlay.overlay-medium {
     background: rgba(0, 0, 0, 0.50);
 }
 
@@ -451,7 +451,7 @@ img {
 }
 
 /* --- Footer --- */
-#templatemo-footer {
+#foo-footer {
     background: #111;
     text-align: center;
     padding: 30px 20px;
@@ -460,12 +460,12 @@ img {
     letter-spacing: 1px;
 }
 
-#templatemo-footer a {
+#foo-footer a {
     color: var(--white-70);
     transition: color var(--transition-smooth);
 }
 
-#templatemo-footer a:hover {
+#foo-footer a:hover {
     color: var(--white);
 }
 
@@ -542,8 +542,8 @@ img {
         transform: rotate(-45deg) translate(5px, -5px);
     }
 
-    /* Disable parallax on mobile — static bg */
-    .parallax-bg {
+    /* Disable bar on mobile — static bg */
+    .bar-bg {
         top: 0;
         height: 100%;
     }

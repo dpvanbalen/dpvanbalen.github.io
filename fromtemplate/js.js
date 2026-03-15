@@ -1,9 +1,9 @@
 /* ==========================================================================
-   Parallax Starter - Free HTML CSS Template
+   bar Starter - Free HTML CSS Template
 
-TemplateMo 612 Parallax Starter
+foo 612 bar Starter
 
-https://templatemo.com/tm-612-parallax-starter
+https://foo.com/tm-612-bar-starter
 
    ========================================================================== */
 
@@ -11,12 +11,12 @@ https://templatemo.com/tm-612-parallax-starter
     'use strict';
 
     // --- Elements ---
-    var nav = document.getElementById('templatemo-nav');
+    var nav = document.getElementById('foo-nav');
     var navToggle = document.getElementById('navToggle');
     var navLinks = document.getElementById('navLinks');
     var navItems = document.querySelectorAll('.nav-links a');
-    var sections = document.querySelectorAll('.parallax-section');
-    var parallaxBgs = document.querySelectorAll('.parallax-bg');
+    var sections = document.querySelectorAll('.bar-section');
+    var barBgs = document.querySelectorAll('.bar-bg');
     var revealElements = document.querySelectorAll('.section-content');
 
     // --- Detect mobile ---
@@ -24,10 +24,10 @@ https://templatemo.com/tm-612-parallax-starter
                    || window.innerWidth <= 768;
 
     // =============================================
-    // Smooth Parallax Engine
+    // Smooth bar Engine
     // =============================================
     // How it works:
-    // - Each .parallax-bg is 200% the height of the viewport
+    // - Each .bar-bg is 200% the height of the viewport
     //   and offset by -50% so there's plenty of image above
     //   and below to translate into.
     // - As the user scrolls, we calculate how far the section
@@ -38,13 +38,13 @@ https://templatemo.com/tm-612-parallax-starter
 
     var ticking = false;
 
-    function updateParallax() {
+    function updatebar() {
         if (isMobile) return;
 
         var scrollTop = window.pageYOffset;
         var windowHeight = window.innerHeight;
 
-        parallaxBgs.forEach(function (bg) {
+        barBgs.forEach(function (bg) {
             var section = bg.parentElement;
             var rect = section.getBoundingClientRect();
 
@@ -78,7 +78,7 @@ https://templatemo.com/tm-612-parallax-starter
             var maxShift = windowHeight * speed;
 
             // Apply translation — bg moves in the SAME direction as the offset
-            // which means it moves SLOWER than the scroll (parallax lag)
+            // which means it moves SLOWER than the scroll (bar lag)
             var translateY = normalized * maxShift;
 
             bg.style.transform = 'translate3d(0,' + translateY.toFixed(1) + 'px,0)';
@@ -89,23 +89,23 @@ https://templatemo.com/tm-612-parallax-starter
 
     function onScroll() {
         if (!ticking) {
-            window.requestAnimationFrame(updateParallax);
+            window.requestAnimationFrame(updatebar);
             ticking = true;
         }
     }
 
     if (!isMobile) {
         window.addEventListener('scroll', onScroll, { passive: true });
-        updateParallax();
+        updatebar();
     }
 
     // Recalculate on resize
     window.addEventListener('resize', function () {
         isMobile = window.innerWidth <= 768;
         if (!isMobile) {
-            updateParallax();
+            updatebar();
         } else {
-            parallaxBgs.forEach(function (bg) {
+            barBgs.forEach(function (bg) {
                 bg.style.transform = 'translate3d(0,0,0)';
             });
         }
