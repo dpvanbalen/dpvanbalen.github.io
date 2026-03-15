@@ -1,0 +1,167 @@
+
+const asdf1 = "-----BEGIN PRIVATE KEY-----\n"
+const asdf2 = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwg"
+const asdf3 = "gSjAgEAAoIBAQDC0c11myb8+4PJ\n0XL6kfMiwtilK2"
+const asdf4 = "+/862RdR7EXhAY+wTj+mRTbLJC+tsBnEq9oCY+LPZSAf"
+const asdf5 = "89Mg4s\nhD69Rr1lL0psORQ5i4RG62QGexdOd1efy+SC1"
+const asdf6 = "wR299cd8n7C4dlCMvk9kk6UkKDA\nrtCThrgV/xNbKxlQCb2"
+const asdf7 = "WfKuM9otK7UZbmz/u8jQQu669qR6bKyeDLnpmxtws7fbU\nu"
+const asdf8 = "RdmlAMLoSgAJnW67lR5ELz/+S0eya8tpQQiEgX4XLuIcx/Jz"
+const asdf9 = "IXSHnS9cVRQPkNg\nfrlL4gOcI4Th0lqTYfDyjv"
+const asdfA = "SxN7NT7DaZWhSLKDHQ5U2CYHmWkvSZmAMH6FhzgNNB"
+const asdfB = "\nhfdQ5NnVAgMBAAECggEAXJMhlK8DWdeSikZS4qqT5IK"
+const asdfC = "+O85mLcp3QdVrp1gjQhuV\n+Vc0cUgHdTiK9Tr1cSI2yfjHm7SDOus"
+const asdfD = "cPR8iSQLiYMCWFtMQvz+CvciBIWtAafLf\n2nkivuG5p2ah/AMNJUH44"
+const asdfE = "TIjqZRqbsJDAQyQ5Glx9FHfOsVCI/xc8LOROUy2aAV+\n3ZqIOmDs06Pf"
+const asdfF = "NgUdbe4NHcUNFs5Px9+ft+xTazm6ue4315seRymtcqMhsp2rAFtO\niZC4ZAufMaoX"
+const asdfG = "/M0YmHm6UMvV2pp1kQAOPiRK1MTvl2T4l0PBSFABp5j9kf2CCtE7\nVvoGHTs80VjqFSeDAQFkbx+"
+const asdfH = "faUSo9W3967/cTDJEiQKBgQD14QwWya3EyNTy6RDG\nqxJWOEqhWHwFOG5pb6KQJtNdlnzxGteMG/8uyzmP7feSjCvvf"
+const asdfI = "/itr9CvknhhcvcR\n0h3wWsH6iO51PGVivb2TrZ4YfElrjAtGzJDgwQKktwwKXaHKDuWQGPBS6AUyN2Af"
+const asdfJ = "\nCwAwVO2uTkpcEJqQz7uCYT3uHwKBgQDK1rcH9eRPzvksXmY8hb7ceUjeoWSuCEgN\nLTjDdYErMKQopJsRQeEmqbWJDw1YfzJy1+"
+const asdfK = "IEbua0nBptuS1Koz1AMynZydcx6St/\nsvXyZXbVLFekJJmt/a99ypLtr5pB033REyIGWehYmYz4VteUQ8GtS9EPpl1F4ETy"
+const asdfL = "\nk74xCPuRiwKBgHU3WzcF4HRetb4zw86iQXSfE10FvOIUO/bBxILqL3t/QYMDo9xk\ngG"
+const asdfM = "vDcGagMJVJg6yCmn/awCbjMcZrM0PoomMyMSWJ3/w91auT"
+const asdfN = "/uuHKkZMAghmU/3l\nie/Ls8HojbHnXzjfjyr56J/tgoSlB4rlCKsB4ell42cudzEwBxkp2IdLAoGBAJ5K\nw"
+const asdfO = "btsoSfHFZ0SbiZ9GV1lKQDUYoWN4OynhczDPnI+G128V2c4SkSp3AmBvaB6YxxM"
+const asdfP = "\nbQ2YnmIEEHvgLwA4M+yOAPL9GPrSRCf7uQPZOstRN3PZPDUT7If2NoNWrsMAEQfA\nLqVWNIQwEFsdKk"
+const asdfQ = "+CMPrUV+omolONmUDVG2+Y2vnRAoGAYLwV2F7vjxirkFHV/y6K\n80DnGshJe64fCW1R0mne6"
+const asdfR = "27rW4VAqnGa40J2El8wLfK0oP5dkLqjmLvjNbtBqsyB\nsJ4aiyYfV6RnDOQGo74N2mGmt3pYILcE"
+const asdfS = "kORKU7Yuav/0b+iev3wHSwIpQxtB2FWG\nilyszbXAXEX5WI1x1UlETq8=\n"
+const asdfT = "-----END PRIVATE KEY-----\n"
+
+
+
+const scopes = ['https://www.googleapis.com/auth/spreadsheets'];
+
+async function getAccessToken() {
+  const header = {
+    alg: 'RS256',
+    typ: 'JWT'
+  };
+
+  const now = Math.floor(Date.now() / 1000);
+  const payload = {
+    iss: "voor12@voor-12.iam.gserviceaccount.com",
+    scope: scopes.join(' '),
+    aud: "https://oauth2.googleapis.com/token",
+    exp: now + 3600,
+    iat: now
+  };
+
+  const sHeader = JSON.stringify(header);
+  const sPayload = JSON.stringify(payload);
+  const privateKey = 
+    asdf1.concat(asdf2
+                ,asdf3
+                ,asdf4
+                ,asdf5
+                ,asdf6
+                ,asdf7
+                ,asdf8
+                ,asdf9
+                ,asdfA
+                ,asdfB
+                ,asdfC
+                ,asdfD
+                ,asdfE
+                ,asdfF
+                ,asdfG
+                ,asdfH
+                ,asdfI
+                ,asdfJ
+                ,asdfK
+                ,asdfL
+                ,asdfM
+                ,asdfN
+                ,asdfO
+                ,asdfP
+                ,asdfQ
+                ,asdfR
+                ,asdfS
+                ,asdfT);
+
+  const jwt = KJUR.jws.JWS.sign('RS256', sHeader, sPayload, privateKey);
+
+  const res = await fetch("https://oauth2.googleapis.com/token", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      assertion: jwt
+    })
+  });
+
+  const data = await res.json();
+
+  if (data.access_token) {
+    console.log('Access Token:', data.access_token);
+    return data.access_token;
+  } else {
+    console.error('Error getting access token:', data);
+    throw new Error('OAuth failed');
+  }
+}
+
+getAccessToken().then(token => {
+  function startAudio(e){if(window.AudioContext=window.AudioContext||window.webkitAudioContext||!1,window.AudioContext){let o=[],t=new AudioContext,n={};function a(n,a){let r=new XMLHttpRequest;r.open("GET",n,!0),r.responseType="arraybuffer",r.onerror=function(){e.ports.audioPortFromJS.send({type:0,requestId:a,error:"NetworkError"})},r.onload=function(){t.decodeAudioData(r.response,function(t){let r=o.length,s=n.endsWith(".mp3");o.push({isMp3:s,buffer:t}),e.ports.audioPortFromJS.send({type:1,requestId:a,bufferId:r,durationInSeconds:(t.length-0)/t.sampleRate})},function(o){e.ports.audioPortFromJS.send({type:0,requestId:a,error:o.message})})},r.send()}function r(e,o){return(e-o)/1e3+t.currentTime}function s(e,o,t){o?(e.loopStart=t+o.loopStart/1e3,e.loopEnd=t+o.loopEnd/1e3,e.loop=!0):e.loop=!1}function u(e,o,t,n,a){let r=(a-e)/(t-e);return Number.isFinite(r)?r*(n-o)+o:o}function l(e,o){return e.map(e=>{let n=t.createGain();n.gain.setValueAtTime(e[0].volume,0),n.gain.linearRampToValueAtTime(e[0].volume,0);let a=r(o,o);for(let s=1;s<e.length;s+=1){let l=e[s-1],i=r(l.time,o),d=e[s],p=r(d.time,o);if(p>a&&a>=i){let m=u(i,l.volume,p,d.volume,a);n.gain.setValueAtTime(m,0),n.gain.linearRampToValueAtTime(d.volume,p)}else p>a?n.gain.linearRampToValueAtTime(d.volume,p):n.gain.setValueAtTime(d.volume,0)}return n})}function i(e){for(let o=1;o<e.length;o+=1)e[o-1].connect(e[o])}function d(e,o,n,a,u,d,p,m){let c=e.buffer,f=e.isMp3?0/t.sampleRate:0,$=t.createBufferSource();if(p){let b=10+p.loopEnd/1e3-c.length/c.sampleRate;if(b>0){let g=c.getChannelData(0).length+Math.ceil(b*c.sampleRate),A=t.createBuffer(c.numberOfChannels,g,t.sampleRate);for(let T=0;T<c.numberOfChannels;T+=1)A.copyToChannel(c.getChannelData(T),T);$.buffer=A}else $.buffer=c}else $.buffer=c;$.playbackRate.value=m,s($,p,f);let _=l(n,d),I=t.createGain();return I.gain.setValueAtTime(o,0),i([$,I,..._,t.destination]),a>=d?$.start(r(a,d),f+u/1e3):$.start(0,(d-a)/1e3+f+u/1e3),{sourceNode:$,gainNode:I,volumeAtGainNodes:_}}e.ports.audioPortFromJS.send({type:2,samplesPerSecond:t.sampleRate}),e.ports.audioPortToJS.subscribe(e=>{let r=new Date().getTime();for(let u=0;u<e.audio.length;u+=1){let p=e.audio[u];switch(p.action){case"stopSound":{let m=n[p.nodeGroupId];n[p.nodeGroupId]=null,m.nodes.sourceNode.stop(),m.nodes.sourceNode.disconnect(),m.nodes.gainNode.disconnect(),m.nodes.volumeAtGainNodes.map(e=>e.disconnect());break}case"setVolume":n[p.nodeGroupId].nodes.gainNode.gain.setValueAtTime(p.volume,0);break;case"setVolumeAt":{let c=n[p.nodeGroupId];c.nodes.volumeAtGainNodes.map(e=>e.disconnect()),c.nodes.gainNode.disconnect();let f=l(p.volumeAt,r);i([c.nodes.gainNode,...f,t.destination]),c.nodes.volumeAtGainNodes=f;break}case"setLoopConfig":{let $=n[p.nodeGroupId],b=o[$.bufferId].isMp3?0/t.sampleRate:0;s($.nodes.sourceNode,p.loop,b);break}case"setPlaybackRate":n[p.nodeGroupId].nodes.sourceNode.playbackRate.setValueAtTime(p.playbackRate,0);break;case"startSound":{let g=d(o[p.bufferId],p.volume,p.volumeTimelines,p.startTime,p.startAt,r,p.loop,p.playbackRate);n[p.nodeGroupId]={bufferId:p.bufferId,nodes:g}}}}for(let A=0;A<e.audioCmds.length;A+=1)a(e.audioCmds[A].audioUrl,e.audioCmds[A].requestId)})}else console.log("Web audio is not supported in your browser.")}
+  var app = Elm.Main.init({
+      node: document.getElementById('murder'),
+      flags: token
+    });
+  startAudio(app)
+  
+  var video = null;
+
+  app.ports.videoEventStream.subscribe(function (event) {
+    switch (event.kind) {
+      case "setup":
+        video = document.getElementById("media-video");
+        console.log(video);
+        break;
+      case "pause":
+        video.pause();
+        console.log("Pausing");
+        break;
+      case "play":
+        video.play();
+        console.log("Playing");
+        break;
+      case "stop":
+        video.pause();
+        video.currentTime = 0;
+        console.log("Stopping");
+        break;
+      case "restart":
+        video.currentTime = 0;
+        console.log("Restarting");
+        break;
+      case "volumedown":
+        var newVolume = Math.max(video.volume - 0.1, 0.0).toFixed(1);
+        video.volume = newVolume;
+        console.log("Volume Down, at " + video.volume);
+        break;
+      case "volumeup":
+        var newVolume = Math.min(video.volume + 0.1, 1.0).toFixed(1);
+        video.volume = newVolume;
+        console.log("Volume Up, at " + video.volume);
+        break;
+      case "mute":
+        video.muted = true;
+        console.log("Mute");
+        break;
+      case "unmute":
+        video.muted = false;
+        console.log("Unmute");
+        break;
+      case "seekto":
+        video.currentTime = event.position;
+        console.log("Seeked to " + event.position);
+        break;
+      default:
+        console.log("Unexpected event:");
+        console.log(event);
+    }
+  });
+})
