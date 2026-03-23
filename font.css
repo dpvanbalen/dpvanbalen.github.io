@@ -1,5 +1,4 @@
 @font-face {
  font-family: "mousedeco";
- src: local("Mouse Deco");
+ src: url("dpvanbalen.github.io/Mouse_Deco.ttf") format("truetype");
 }
-/* src: url("https://your-site.com/templates/template-name/fonts/font-name.ttf") format("truetype");
