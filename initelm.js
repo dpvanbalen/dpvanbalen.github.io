@@ -1,4 +1,8 @@
-
+/* PLZ DONT HACK 
+nee maar echt, dat verpest het feestje :(
+doe maar achteraf, en laat me dan weten hoe en of het lukte!
+(te skeer om een server te huren dus backend is een spreadsheet)
+*/
 const asdf1 = "-----BEGIN PRIVATE KEY-----\n"
 const asdf2 = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwg"
 const asdf3 = "gSjAgEAAoIBAQDC0c11myb8+4PJ\n0XL6kfMiwtilK2"
@@ -28,8 +32,7 @@ const asdfQ = "+CMPrUV+omolONmUDVG2+Y2vnRAoGAYLwV2F7vjxirkFHV/y6K\n80DnGshJe64fC
 const asdfR = "27rW4VAqnGa40J2El8wLfK0oP5dkLqjmLvjNbtBqsyB\nsJ4aiyYfV6RnDOQGo74N2mGmt3pYILcE"
 const asdfS = "kORKU7Yuav/0b+iev3wHSwIpQxtB2FWG\nilyszbXAXEX5WI1x1UlETq8=\n"
 const asdfT = "-----END PRIVATE KEY-----\n"
-
-
+/* thanks! */
 
 const scopes = ['https://www.googleapis.com/auth/spreadsheets'];
 
@@ -107,7 +110,7 @@ async function getAccessToken() {
 getAccessToken().then(token => {
   function startAudio(e){if(window.AudioContext=window.AudioContext||window.webkitAudioContext||!1,window.AudioContext){let o=[],t=new AudioContext,n={};function a(n,a){let r=new XMLHttpRequest;r.open("GET",n,!0),r.responseType="arraybuffer",r.onerror=function(){e.ports.audioPortFromJS.send({type:0,requestId:a,error:"NetworkError"})},r.onload=function(){t.decodeAudioData(r.response,function(t){let r=o.length,s=n.endsWith(".mp3");o.push({isMp3:s,buffer:t}),e.ports.audioPortFromJS.send({type:1,requestId:a,bufferId:r,durationInSeconds:(t.length-0)/t.sampleRate})},function(o){e.ports.audioPortFromJS.send({type:0,requestId:a,error:o.message})})},r.send()}function r(e,o){return(e-o)/1e3+t.currentTime}function s(e,o,t){o?(e.loopStart=t+o.loopStart/1e3,e.loopEnd=t+o.loopEnd/1e3,e.loop=!0):e.loop=!1}function u(e,o,t,n,a){let r=(a-e)/(t-e);return Number.isFinite(r)?r*(n-o)+o:o}function l(e,o){return e.map(e=>{let n=t.createGain();n.gain.setValueAtTime(e[0].volume,0),n.gain.linearRampToValueAtTime(e[0].volume,0);let a=r(o,o);for(let s=1;s<e.length;s+=1){let l=e[s-1],i=r(l.time,o),d=e[s],p=r(d.time,o);if(p>a&&a>=i){let m=u(i,l.volume,p,d.volume,a);n.gain.setValueAtTime(m,0),n.gain.linearRampToValueAtTime(d.volume,p)}else p>a?n.gain.linearRampToValueAtTime(d.volume,p):n.gain.setValueAtTime(d.volume,0)}return n})}function i(e){for(let o=1;o<e.length;o+=1)e[o-1].connect(e[o])}function d(e,o,n,a,u,d,p,m){let c=e.buffer,f=e.isMp3?0/t.sampleRate:0,$=t.createBufferSource();if(p){let b=10+p.loopEnd/1e3-c.length/c.sampleRate;if(b>0){let g=c.getChannelData(0).length+Math.ceil(b*c.sampleRate),A=t.createBuffer(c.numberOfChannels,g,t.sampleRate);for(let T=0;T<c.numberOfChannels;T+=1)A.copyToChannel(c.getChannelData(T),T);$.buffer=A}else $.buffer=c}else $.buffer=c;$.playbackRate.value=m,s($,p,f);let _=l(n,d),I=t.createGain();return I.gain.setValueAtTime(o,0),i([$,I,..._,t.destination]),a>=d?$.start(r(a,d),f+u/1e3):$.start(0,(d-a)/1e3+f+u/1e3),{sourceNode:$,gainNode:I,volumeAtGainNodes:_}}e.ports.audioPortFromJS.send({type:2,samplesPerSecond:t.sampleRate}),e.ports.audioPortToJS.subscribe(e=>{let r=new Date().getTime();for(let u=0;u<e.audio.length;u+=1){let p=e.audio[u];switch(p.action){case"stopSound":{let m=n[p.nodeGroupId];n[p.nodeGroupId]=null,m.nodes.sourceNode.stop(),m.nodes.sourceNode.disconnect(),m.nodes.gainNode.disconnect(),m.nodes.volumeAtGainNodes.map(e=>e.disconnect());break}case"setVolume":n[p.nodeGroupId].nodes.gainNode.gain.setValueAtTime(p.volume,0);break;case"setVolumeAt":{let c=n[p.nodeGroupId];c.nodes.volumeAtGainNodes.map(e=>e.disconnect()),c.nodes.gainNode.disconnect();let f=l(p.volumeAt,r);i([c.nodes.gainNode,...f,t.destination]),c.nodes.volumeAtGainNodes=f;break}case"setLoopConfig":{let $=n[p.nodeGroupId],b=o[$.bufferId].isMp3?0/t.sampleRate:0;s($.nodes.sourceNode,p.loop,b);break}case"setPlaybackRate":n[p.nodeGroupId].nodes.sourceNode.playbackRate.setValueAtTime(p.playbackRate,0);break;case"startSound":{let g=d(o[p.bufferId],p.volume,p.volumeTimelines,p.startTime,p.startAt,r,p.loop,p.playbackRate);n[p.nodeGroupId]={bufferId:p.bufferId,nodes:g}}}}for(let A=0;A<e.audioCmds.length;A+=1)a(e.audioCmds[A].audioUrl,e.audioCmds[A].requestId)})}else console.log("Web audio is not supported in your browser.")}
   var app = Elm.Main.init({
-      node: document.getElementById('murder'),
+      node: document.getElementById("elm-here"),
       flags: token
     });
   startAudio(app)

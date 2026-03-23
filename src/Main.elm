@@ -1,24 +1,25 @@
 port module Main exposing (..)
 
 import Audio
-import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput)
+import Html.Events exposing (..)
 import Http exposing (Error(..))
 import Json.Decode
 import Json.Encode
-import Maybe.Extra
-import Process
-import Task
 import Time
 
 import Types exposing (..)
 import Database exposing (..)
+import Video exposing (..)
+import Secrets exposing (..)
+import Dict
+
+import Dialog
+import Maybe.Extra
 
 -- PORTS
 
-port videoEventStream : Json.Encode.Value -> Cmd msg
 port audioPortToJS : Json.Encode.Value -> Cmd msg
 port audioPortFromJS : (Json.Decode.Value -> msg) -> Sub msg
 port confetti : Json.Encode.Value -> Cmd msg
@@ -45,10 +46,9 @@ main =
 
 init : String -> (Model, Cmd Msg, Audio.AudioCmd Msg)
 init oauthtoken =
-  ( ToDo
-  , Cmd.batch [ pushVideoEvent Setup
-              ] 
-  , Audio.cmdNone
+  ( NotLoggedIn { password = "", fromsheet = Nothing, poirot = Nothing, charStatus = NotSelected }
+  , readRSVP oauthtoken
+  , Audio.loadAudio PoirotReady "https:dpvanbalen.github.io/images/poirot.mp3"
   )
 
 
@@ -57,16 +57,44 @@ init oauthtoken =
 
 
 update : Audio.AudioData -> Msg -> Model -> (Model, Cmd Msg, Audio.AudioCmd Msg)
-update _ msg model =
+update _ msg model = let todo = (model, Cmd.none, Audio.cmdNone) in
   case model of
-   ToDo -> (ToDo, Cmd.none, Audio.cmdNone)
+   NotLoggedIn m -> case msg of
+    PassChange newpass -> (NotLoggedIn {m | password = newpass}, Cmd.none, Audio.cmdNone)
+    RSVPReceived result -> case result of
+      Ok data -> (NotLoggedIn {m | fromsheet = Just data}, Cmd.none, Audio.cmdNone)
+      _ -> todo
+    PoirotReady p -> case p of
+      -- Ok p2 -> (NotLoggedIn {m | poirot = Just (p2, now)}, Cmd.none, Audio.cmdNone) TODO: need to add time to model
+      _ -> todo
+    ChooseChar i -> let newstatus = case m.charStatus of
+                                        NotSelected -> Confirming i
+                                        Confirming _ -> NotSelected
+                                        ZoomingOn j -> ZoomingOn j
+      in (NotLoggedIn {m | charStatus = newstatus}, Cmd.none, Audio.cmdNone)
+    Login -> case findAccount m.password of
+      Nothing -> todo -- wrong password
+      Just name -> ( LoggedIn { name = name
+                              , rsvp = Maybe.map (\x -> Maybe.withDefault Maybe (Dict.get name x)) m.fromsheet
+                              , char = Nothing
+                              , charstory = Nothing
+                              , poirot = m.poirot}
+                   , Cmd.none
+                   , Audio.cmdNone)
+    _ -> todo
+   LoggedIn m -> case msg of
+    RSVPReceived result -> case result of
+      Ok data -> (LoggedIn {m | rsvp = Just (Maybe.withDefault Maybe (Dict.get m.name data)}, Cmd.none, Audio.cmdNone)
+      _ -> todo
+    _ -> todo
+
 
 -- SUBSCRIPTIONS
 
 
 subscriptions : Audio.AudioData -> Model -> Sub Msg
-subscriptions _ _ =
-  Time.every 50 (\_ -> TODO)
+subscriptions _ _ = Sub.none
+  -- Time.every 50 (\_ -> TODO)
 
 
 
@@ -76,10 +104,46 @@ subscriptions _ _ =
 view : Audio.AudioData -> Model -> Html Msg
 view _ model =
   case model of
-    ToDo -> div [] []
+    NotLoggedIn m -> div [class "about-cols"] 
+      [ 
+        div [class "about-col"] 
+        [ input [placeholder "password", value m.password, onInput PassChange] []
+        , button [onClick Login] [text "Log in"]
+        -- , p [] [text (Maybe.withDefault "" (m.fromsheet |> Maybe.andThen (\r -> Dict.get "test" r |> Maybe.map showrsvp)))]
+        ]
+      , div [class "about-col"] 
+        [ button [onClick (ChooseChar 1)] [text "karakter 1"], br [] []
+        , button [onClick (ChooseChar 2)] [text "karakter 2"], br [] []
+        , button [onClick (ChooseChar 3)] [text "karakter 3"], br [] []
+        ]
+      , Dialog.render 
+          { styles = [ ( "width", "40%" ) ]
+            , title = "My Dialog"
+            , content = [ text "This is my dialog's body." ]
+            , actionBar = [ dialogButton "Close" ]
+          }
+          (case m.charStatus of
+            NotSelected -> Dialog.hidden
+            ZoomingOn _ -> Dialog.visible
+            Confirming _ -> Dialog.visible
+          )  
+      ]
+    LoggedIn m -> div [] [ text ("logged in as " ++ m.name)
+                         , br [] []
+                         , text ("RSVP status: " ++ Maybe.Extra.unwrap "{backend is nog niet geladen}" showrsvp m.rsvp)
+                         ]
 
+
+dialogButton : String -> Html Msg
+dialogButton caption =
+    button
+        [ onClick (ChooseChar 0)
+        , class "mdl-button mdl-button--raised mdl-button--accent"
+        ]
+        [ text caption ]
 
 -- AUDIO
+audio : Audio.AudioData -> Model -> Audio.Audio
 audio _ model = 
   let maybeplay x = case x of
         Nothing -> Audio.silence
@@ -89,79 +153,3 @@ audio _ model =
 
 
 
-
-
-{-| These are all the kinds of messages that can be sent to the video player.
-Add more cases if we want to tell the video player new things.
--}
-type VideoEvent
-    = Setup
-    | Play
-    | Pause
-    | Stop
-    | Restart
-    | Mute
-    | Unmute
-    | VolumeDown
-    | VolumeUp
-    | SeekTo Float
-
-
-{-| This is the function we should use to send messages to the video player. It
-takes care of encoding and pushing through the port.
--}
-pushVideoEvent : VideoEvent -> Cmd msg
-pushVideoEvent event =
-    event
-        |> encodeVideoEvent
-        |> videoEventStream
-
-
-{-| Encodes a VideoEvent as a simple JSON value. As new events are added, also
-add a case for the encoder. Elm will throw a compile-time error if you forget,
-so don't worry about forgetting.
--}
-encodeVideoEvent : VideoEvent -> Json.Encode.Value
-encodeVideoEvent event =
-    case event of
-        Setup ->
-            Json.Encode.object
-                [ ( "kind", Json.Encode.string "setup" ) ]
-
-        Play ->
-            Json.Encode.object
-                [ ( "kind", Json.Encode.string "play" ) ]
-
-        Pause ->
-            Json.Encode.object
-                [ ( "kind", Json.Encode.string "pause" ) ]
-
-        Stop ->
-            Json.Encode.object
-                [ ( "kind", Json.Encode.string "stop" ) ]
-
-        Restart ->
-            Json.Encode.object
-                [ ( "kind", Json.Encode.string "restart" ) ]
-
-        Mute ->
-            Json.Encode.object
-                [ ( "kind", Json.Encode.string "mute" ) ]
-
-        Unmute ->
-            Json.Encode.object
-                [ ( "kind", Json.Encode.string "unmute" ) ]
-
-        VolumeDown ->
-            Json.Encode.object
-                [ ( "kind", Json.Encode.string "volumedown" ) ]
-
-        VolumeUp ->
-            Json.Encode.object
-                [ ( "kind", Json.Encode.string "volumeup" ) ]
-
-        SeekTo position ->
-            Json.Encode.object
-                [ ( "kind", Json.Encode.string "seekto" )
-                , ( "position", Json.Encode.float position )
-                ]

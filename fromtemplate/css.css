@@ -1,16 +1,11 @@
 /* ==========================================================================
    bar Starter - Free HTML CSS Template
-   
-foo 612 bar Starter
-
-https://foo.com/tm-612-bar-starter
-
    ========================================================================== */
 
 /* --- CSS Variables --- */
 :root {
-    --font-heading: 'Oswald', sans-serif;
-    --font-body: 'Source Sans 3', sans-serif;
+    --font-heading: 'mousedeco', 'Times New Roman', 'Oswald', sans-serif;
+    --font-body: 'mousedeco', 'Source Sans 3', sans-serif; 
     --white: #ffffff;
     --white-90: rgba(255, 255, 255, 0.9);
     --white-70: rgba(255, 255, 255, 0.7);
@@ -167,6 +162,10 @@ img {
 
 .bar-overlay.overlay-medium {
     background: rgba(0, 0, 0, 0.50);
+}
+
+.bar-overlay.overlay-light {
+    background: rgba(0, 0, 0, 0.30);
 }
 
 /* Content Layer */
