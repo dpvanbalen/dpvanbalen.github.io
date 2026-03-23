@@ -17,6 +17,9 @@ import Dict
 
 import Dialog
 import Maybe.Extra
+import Utils exposing (relwidth)
+import Utils exposing (relheight)
+import Utils exposing (cqhheight)
 
 -- PORTS
 
@@ -112,7 +115,7 @@ view _ model = div []
       [ id "todo", class "bar-section"]
       [ div [class "bar-bg", attribute "data-speed" "0.45", style "background-image" "url(\'images/vijver.jpeg\')"] []
       , div [class "bar-overlay"] []
-      , div [class "section-content-wide", width 1500] [viewSecondPage model]
+      , div [class "section-content-wide", relwidth 80] [viewSecondPage model]
       ]
   ]
 
@@ -148,7 +151,7 @@ viewFirstPage model =
                          ]
 
 viewSecondPage model = div [width 2000] (List.map
-  (\name -> input [type_ "image", src ("images/chars/"++name++" main.png"), height 300] [])
+  (\name -> input [type_ "image", src ("images/chars/"++name++" main.png"), cqhheight 250] [])
   ["alexander", "bernard", "brouwer", "dr lodewijk", "eduard", "elisabeth", "geerlings", "gerrit", "gijsbert", "hendriks", "janne", "marta", "michael", "rosalie", "susanna", "ten have", "theodoor"])
 
 

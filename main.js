@@ -12419,6 +12419,12 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
+var $author$project$Utils$relwidth = function (i) {
+	return A2(
+		$elm$html$Html$Attributes$attribute,
+		'width',
+		$elm$core$String$fromInt(i) + '%');
+};
 var $elm$html$Html$section = _VirtualDom_node('section');
 var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
@@ -12723,11 +12729,11 @@ var $author$project$Main$viewFirstPage = function (model) {
 				]));
 	}
 };
-var $elm$html$Html$Attributes$height = function (n) {
+var $author$project$Utils$cqhheight = function (i) {
 	return A2(
-		_VirtualDom_attribute,
+		$elm$html$Html$Attributes$attribute,
 		'height',
-		$elm$core$String$fromInt(n));
+		$elm$core$String$fromInt(i) + 'cqh');
 };
 var $elm$html$Html$Attributes$src = function (url) {
 	return A2(
@@ -12758,7 +12764,7 @@ var $author$project$Main$viewSecondPage = function (model) {
 						[
 							$elm$html$Html$Attributes$type_('image'),
 							$elm$html$Html$Attributes$src('images/chars/' + (name + ' main.png')),
-							$elm$html$Html$Attributes$height(300)
+							$author$project$Utils$cqhheight(250)
 						]),
 					_List_Nil);
 			},
@@ -12838,7 +12844,7 @@ var $author$project$Main$view = F2(
 							_List_fromArray(
 								[
 									$elm$html$Html$Attributes$class('section-content-wide'),
-									$elm$html$Html$Attributes$width(1500)
+									$author$project$Utils$relwidth(80)
 								]),
 							_List_fromArray(
 								[
