@@ -7622,7 +7622,7 @@ var $author$project$Database$readRSVP = function (oauth) {
 var $author$project$Main$init = function (oauthtoken) {
 	return _Utils_Tuple3(
 		$author$project$Types$NotLoggedIn(
-			{charStatus: $author$project$Types$NotSelected, fromsheet: $elm$core$Maybe$Nothing, password: '', poirot: $elm$core$Maybe$Nothing}),
+			{charStatus: $author$project$Types$NotSelected, chars: $elm$core$Dict$empty, fromrsvpsheet: $elm$core$Maybe$Nothing, password: '', poirot: $elm$core$Maybe$Nothing}),
 		$author$project$Database$readRSVP(oauthtoken),
 		A2($MartinSStewart$elm_audio$Audio$loadAudio, $author$project$Types$PoirotReady, 'https:dpvanbalen.github.io/images/poirot.mp3'));
 };
@@ -12281,6 +12281,16 @@ var $author$project$Secrets$findAccount = function (password) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
 var $author$project$Main$update = F3(
 	function (_v0, msg, model) {
 		var todo = _Utils_Tuple3(model, $elm$core$Platform$Cmd$none, $MartinSStewart$elm_audio$Audio$cmdNone);
@@ -12305,7 +12315,7 @@ var $author$project$Main$update = F3(
 								_Utils_update(
 									m,
 									{
-										fromsheet: $elm$core$Maybe$Just(data)
+										fromrsvpsheet: $elm$core$Maybe$Just(data)
 									})),
 							$elm$core$Platform$Cmd$none,
 							$MartinSStewart$elm_audio$Audio$cmdNone);
@@ -12345,14 +12355,18 @@ var $author$project$Main$update = F3(
 						return _Utils_Tuple3(
 							$author$project$Types$LoggedIn(
 								{
-									_char: $elm$core$Maybe$Nothing,
 									charstory: $elm$core$Maybe$Nothing,
 									name: name,
 									poirot: m.poirot,
 									rsvp: A2(
-										$elm$core$Maybe$andThen,
-										$elm$core$Dict$get(name),
-										m.fromsheet)
+										$elm$core$Maybe$map,
+										function (x) {
+											return A2(
+												$elm$core$Maybe$withDefault,
+												$author$project$Types$Maybe,
+												A2($elm$core$Dict$get, name, x));
+										},
+										m.fromrsvpsheet)
 								}),
 							$elm$core$Platform$Cmd$none,
 							$MartinSStewart$elm_audio$Audio$cmdNone);
@@ -12371,7 +12385,11 @@ var $author$project$Main$update = F3(
 							_Utils_update(
 								m,
 								{
-									rsvp: A2($elm$core$Dict$get, m.name, data)
+									rsvp: $elm$core$Maybe$Just(
+										A2(
+											$elm$core$Maybe$withDefault,
+											$author$project$Types$Maybe,
+											A2($elm$core$Dict$get, m.name, data)))
 								})),
 						$elm$core$Platform$Cmd$none,
 						$MartinSStewart$elm_audio$Audio$cmdNone);
@@ -12383,6 +12401,27 @@ var $author$project$Main$update = F3(
 			}
 		}
 	});
+var $elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
+var $elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$string(string));
+	});
+var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
+var $elm$html$Html$section = _VirtualDom_node('section');
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $author$project$Types$ChooseChar = function (a) {
 	return {$: 'ChooseChar', a: a};
 };
@@ -12392,14 +12431,6 @@ var $author$project$Types$PassChange = function (a) {
 };
 var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$button = _VirtualDom_node('button');
-var $elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$string(string));
-	});
-var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -12433,19 +12464,8 @@ var $author$project$Main$dialogButton = function (caption) {
 				$elm$html$Html$text(caption)
 			]));
 };
-var $elm$html$Html$div = _VirtualDom_node('div');
 var $billstclair$elm_dialog$Dialog$hidden = false;
 var $elm$html$Html$input = _VirtualDom_node('input');
-var $elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return $elm$core$Maybe$Just(
-				f(value));
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -12477,7 +12497,6 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			$elm$html$Html$Events$alwaysStop,
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
-var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $billstclair$elm_dialog$Dialog$dialogBaseStyle = _List_fromArray(
 	[
@@ -12488,8 +12507,6 @@ var $billstclair$elm_dialog$Dialog$dialogBaseStyle = _List_fromArray(
 		_Utils_Tuple2('border', '1px solid rgba(0,0,0,0.5)'),
 		_Utils_Tuple2('box-shadow', '4px 4px 5px 0px rgba(97,97,97,1)')
 	]);
-var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $billstclair$elm_dialog$Dialog$mapStyles = function (styles) {
 	return A2(
 		$elm$core$List$map,
@@ -12579,152 +12596,256 @@ var $elm_community$maybe_extra$Maybe$Extra$unwrap = F3(
 	});
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $billstclair$elm_dialog$Dialog$visible = true;
+var $author$project$Main$viewFirstPage = function (model) {
+	if (model.$ === 'NotLoggedIn') {
+		var m = model.a;
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('about-cols')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('about-col')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$input,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$placeholder('password'),
+									$elm$html$Html$Attributes$value(m.password),
+									$elm$html$Html$Events$onInput($author$project$Types$PassChange)
+								]),
+							_List_Nil),
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick($author$project$Types$Login)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Log in')
+								]))
+						])),
+					A2(
+					$elm$html$Html$div,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('about-col')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick(
+									$author$project$Types$ChooseChar(1))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('karakter 1')
+								])),
+							A2($elm$html$Html$br, _List_Nil, _List_Nil),
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick(
+									$author$project$Types$ChooseChar(2))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('karakter 2')
+								])),
+							A2($elm$html$Html$br, _List_Nil, _List_Nil),
+							A2(
+							$elm$html$Html$button,
+							_List_fromArray(
+								[
+									$elm$html$Html$Events$onClick(
+									$author$project$Types$ChooseChar(3))
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('karakter 3')
+								])),
+							A2($elm$html$Html$br, _List_Nil, _List_Nil)
+						])),
+					A2(
+					$billstclair$elm_dialog$Dialog$render,
+					{
+						actionBar: _List_fromArray(
+							[
+								$author$project$Main$dialogButton('Close')
+							]),
+						content: _List_fromArray(
+							[
+								$elm$html$Html$text('This is my dialog\'s body.')
+							]),
+						styles: _List_fromArray(
+							[
+								_Utils_Tuple2('width', '40%')
+							]),
+						title: 'My Dialog'
+					},
+					function () {
+						var _v1 = m.charStatus;
+						switch (_v1.$) {
+							case 'NotSelected':
+								return $billstclair$elm_dialog$Dialog$hidden;
+							case 'ZoomingOn':
+								return $billstclair$elm_dialog$Dialog$visible;
+							default:
+								return $billstclair$elm_dialog$Dialog$visible;
+						}
+					}())
+				]));
+	} else {
+		var m = model.a;
+		return A2(
+			$elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					$elm$html$Html$text('logged in as ' + m.name),
+					A2($elm$html$Html$br, _List_Nil, _List_Nil),
+					$elm$html$Html$text(
+					'RSVP status: ' + A3($elm_community$maybe_extra$Maybe$Extra$unwrap, '{backend is nog niet geladen}', $author$project$Database$showrsvp, m.rsvp))
+				]));
+	}
+};
+var $elm$html$Html$Attributes$height = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'height',
+		$elm$core$String$fromInt(n));
+};
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
+var $elm$html$Html$Attributes$width = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'width',
+		$elm$core$String$fromInt(n));
+};
+var $author$project$Main$viewSecondPage = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$width(2000)
+			]),
+		A2(
+			$elm$core$List$map,
+			function (name) {
+				return A2(
+					$elm$html$Html$input,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$type_('image'),
+							$elm$html$Html$Attributes$src('images/chars/' + (name + ' main.png')),
+							$elm$html$Html$Attributes$height(300)
+						]),
+					_List_Nil);
+			},
+			_List_fromArray(
+				['alexander', 'bernard', 'brouwer', 'dr lodewijk', 'eduard', 'elisabeth', 'geerlings', 'gerrit', 'gijsbert', 'hendriks', 'janne', 'marta', 'michael', 'rosalie', 'susanna', 'ten have', 'theodoor'])));
+};
 var $author$project$Main$view = F2(
 	function (_v0, model) {
-		if (model.$ === 'NotLoggedIn') {
-			var m = model.a;
-			return A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('about-cols')
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('about-col')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$input,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$placeholder('password'),
-										$elm$html$Html$Attributes$value(m.password),
-										$elm$html$Html$Events$onInput($author$project$Types$PassChange)
-									]),
-								_List_Nil),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick($author$project$Types$Login)
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Log in')
-									])),
-								A2(
-								$elm$html$Html$p,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$elm$html$Html$text(
-										A2(
-											$elm$core$Maybe$withDefault,
-											'',
-											A2(
-												$elm$core$Maybe$andThen,
-												function (r) {
-													return A2(
-														$elm$core$Maybe$map,
-														$author$project$Database$showrsvp,
-														A2($elm$core$Dict$get, 'test', r));
-												},
-												m.fromsheet)))
-									]))
-							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('about-col')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Types$ChooseChar(1))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('karakter 1')
-									])),
-								A2($elm$html$Html$br, _List_Nil, _List_Nil),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Types$ChooseChar(2))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('karakter 2')
-									])),
-								A2($elm$html$Html$br, _List_Nil, _List_Nil),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Events$onClick(
-										$author$project$Types$ChooseChar(3))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('karakter 3')
-									])),
-								A2($elm$html$Html$br, _List_Nil, _List_Nil)
-							])),
-						A2(
-						$billstclair$elm_dialog$Dialog$render,
-						{
-							actionBar: _List_fromArray(
+		return A2(
+			$elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$section,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$id('personal'),
+							$elm$html$Html$Attributes$class('bar-section')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
 								[
-									$author$project$Main$dialogButton('Close')
+									$elm$html$Html$Attributes$class('bar-bg'),
+									A2($elm$html$Html$Attributes$attribute, 'data-speed', '0.45'),
+									A2($elm$html$Html$Attributes$style, 'background-image', 'url(\'images/gang.jpeg\')')
 								]),
-							content: _List_fromArray(
+							_List_Nil),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
 								[
-									$elm$html$Html$text('This is my dialog\'s body.')
+									$elm$html$Html$Attributes$class('bar-overlay')
 								]),
-							styles: _List_fromArray(
+							_List_Nil),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
 								[
-									_Utils_Tuple2('width', '40%')
+									$elm$html$Html$Attributes$class('section-content')
 								]),
-							title: 'My Dialog'
-						},
-						function () {
-							var _v2 = m.charStatus;
-							switch (_v2.$) {
-								case 'NotSelected':
-									return $billstclair$elm_dialog$Dialog$hidden;
-								case 'ZoomingOn':
-									return $billstclair$elm_dialog$Dialog$visible;
-								default:
-									return $billstclair$elm_dialog$Dialog$visible;
-							}
-						}())
-					]));
-		} else {
-			var m = model.a;
-			return A2(
-				$elm$html$Html$div,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('logged in as ' + m.name),
-						A2($elm$html$Html$br, _List_Nil, _List_Nil),
-						$elm$html$Html$text(
-						'RSVP status: ' + A3($elm_community$maybe_extra$Maybe$Extra$unwrap, '', $author$project$Database$showrsvp, m.rsvp))
-					]));
-		}
+							_List_fromArray(
+								[
+									$author$project$Main$viewFirstPage(model)
+								]))
+						])),
+					A2(
+					$elm$html$Html$section,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$id('todo'),
+							$elm$html$Html$Attributes$class('bar-section')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('bar-bg'),
+									A2($elm$html$Html$Attributes$attribute, 'data-speed', '0.45'),
+									A2($elm$html$Html$Attributes$style, 'background-image', 'url(\'images/vijver.jpeg\')')
+								]),
+							_List_Nil),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('bar-overlay')
+								]),
+							_List_Nil),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('section-content-wide'),
+									$elm$html$Html$Attributes$width(1500)
+								]),
+							_List_fromArray(
+								[
+									$author$project$Main$viewSecondPage(model)
+								]))
+						]))
+				]));
 	});
 var $author$project$Main$main = $MartinSStewart$elm_audio$Audio$elementWithAudio(
 	{

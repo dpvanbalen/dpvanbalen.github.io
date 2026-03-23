@@ -6,7 +6,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http exposing (Error(..))
 import Json.Decode
-import Json.Encode
+import Json.Encode as Json
 import Time
 
 import Types exposing (..)
@@ -20,9 +20,9 @@ import Maybe.Extra
 
 -- PORTS
 
-port audioPortToJS : Json.Encode.Value -> Cmd msg
+port audioPortToJS : Json.Value -> Cmd msg
 port audioPortFromJS : (Json.Decode.Value -> msg) -> Sub msg
-port confetti : Json.Encode.Value -> Cmd msg
+port confetti : Json.Value -> Cmd msg
 
 
 
@@ -46,7 +46,7 @@ main =
 
 init : String -> (Model, Cmd Msg, Audio.AudioCmd Msg)
 init oauthtoken =
-  ( NotLoggedIn { password = "", fromsheet = Nothing, poirot = Nothing, charStatus = NotSelected }
+  ( NotLoggedIn { password = "", fromrsvpsheet = Nothing, chars = Dict.empty, poirot = Nothing, charStatus = NotSelected }
   , readRSVP oauthtoken
   , Audio.loadAudio PoirotReady "https:dpvanbalen.github.io/images/poirot.mp3"
   )
@@ -62,7 +62,7 @@ update _ msg model = let todo = (model, Cmd.none, Audio.cmdNone) in
    NotLoggedIn m -> case msg of
     PassChange newpass -> (NotLoggedIn {m | password = newpass}, Cmd.none, Audio.cmdNone)
     RSVPReceived result -> case result of
-      Ok data -> (NotLoggedIn {m | fromsheet = Just data}, Cmd.none, Audio.cmdNone)
+      Ok data -> (NotLoggedIn {m | fromrsvpsheet = Just data}, Cmd.none, Audio.cmdNone)
       _ -> todo
     PoirotReady p -> case p of
       -- Ok p2 -> (NotLoggedIn {m | poirot = Just (p2, now)}, Cmd.none, Audio.cmdNone) TODO: need to add time to model
@@ -75,8 +75,7 @@ update _ msg model = let todo = (model, Cmd.none, Audio.cmdNone) in
     Login -> case findAccount m.password of
       Nothing -> todo -- wrong password
       Just name -> ( LoggedIn { name = name
-                              , rsvp = Maybe.map (\x -> Maybe.withDefault Maybe (Dict.get name x)) m.fromsheet
-                              , char = Nothing
+                              , rsvp = Maybe.map (\x -> Maybe.withDefault Maybe (Dict.get name x)) m.fromrsvpsheet
                               , charstory = Nothing
                               , poirot = m.poirot}
                    , Cmd.none
@@ -84,7 +83,7 @@ update _ msg model = let todo = (model, Cmd.none, Audio.cmdNone) in
     _ -> todo
    LoggedIn m -> case msg of
     RSVPReceived result -> case result of
-      Ok data -> (LoggedIn {m | rsvp = Just (Maybe.withDefault Maybe (Dict.get m.name data)}, Cmd.none, Audio.cmdNone)
+      Ok data -> (LoggedIn {m | rsvp = Just (Maybe.withDefault Maybe (Dict.get m.name data))}, Cmd.none, Audio.cmdNone)
       _ -> todo
     _ -> todo
 
@@ -102,7 +101,22 @@ subscriptions _ _ = Sub.none
 
 
 view : Audio.AudioData -> Model -> Html Msg
-view _ model =
+view _ model = div []
+  [ section 
+      [ id "personal", class "bar-section"]
+      [ div [class "bar-bg", attribute "data-speed" "0.45", style "background-image" "url(\'images/gang.jpeg\')"] []
+      , div [class "bar-overlay"] []
+      , div [class "section-content"] [viewFirstPage model]
+      ]
+  , section
+      [ id "todo", class "bar-section"]
+      [ div [class "bar-bg", attribute "data-speed" "0.45", style "background-image" "url(\'images/vijver.jpeg\')"] []
+      , div [class "bar-overlay"] []
+      , div [class "section-content-wide", width 1500] [viewSecondPage model]
+      ]
+  ]
+
+viewFirstPage model =
   case model of
     NotLoggedIn m -> div [class "about-cols"] 
       [ 
@@ -132,6 +146,10 @@ view _ model =
                          , br [] []
                          , text ("RSVP status: " ++ Maybe.Extra.unwrap "{backend is nog niet geladen}" showrsvp m.rsvp)
                          ]
+
+viewSecondPage model = div [width 2000] (List.map
+  (\name -> input [type_ "image", src ("images/chars/"++name++" main.png"), height 300] [])
+  ["alexander", "bernard", "brouwer", "dr lodewijk", "eduard", "elisabeth", "geerlings", "gerrit", "gijsbert", "hendriks", "janne", "marta", "michael", "rosalie", "susanna", "ten have", "theodoor"])
 
 
 dialogButton : String -> Html Msg
