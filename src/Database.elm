@@ -33,14 +33,18 @@ parseRSVP : Nosj.Decoder (Dict String RSVP)
 parseRSVP = -- TODO: maybe the list needs transposing
   Nosj.field "values" 
     (Nosj.map 
-      (List.map (\x -> case x of
-        (name :: rsvp :: _) -> (name, pRSVP rsvp)
-        _ -> ("",Nothing))
-      >> List.filterMap (\(n,r) -> r |> Maybe.andThen (\r2 -> if n=="" then Nothing else Just (n,r2)))
-      >> Dict.fromList)
+      (List.map 
+        (\x -> case x of
+          (name :: rsvp :: _) -> (name, pRSVP rsvp)
+          _ -> ("",Nothing)
+        ) >> List.filterMap (\(n,r) -> r |> Maybe.andThen (\r2 -> if n=="" then Nothing else Just (n,r2)))
+          >> Dict.fromList
+      )
       (Nosj.list 
         (Nosj.list 
-          Nosj.string)))
+          Nosj.string)
+      )
+    )
 
 
 pRSVP : String -> Maybe RSVP

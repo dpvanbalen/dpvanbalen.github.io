@@ -2,3 +2,19 @@
  font-family: "mousedeco";
  src: url("https://dpvanbalen.github.io/Mouse_Deco.ttf") format("truetype");
 }
+
+@font-face {
+ font-family: "hattinand";
+ src: url("https://dpvanbalen.github.io/Hattinand.otf") format("opentype");
+}
+
+.helveticalarge {
+  font-family: Helvetica;
+  font-size: large;
+}
+
+.helveticalarger {
+  font-family: Helvetica;
+  font-size: xx-large;
+}
+
