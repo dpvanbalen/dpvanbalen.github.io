@@ -18,7 +18,7 @@ allekarakters =
   , ("Zuster Elisabeth Koster"           , "elisabeth"    , "De ijverige zuster")
   , ("Bernard van Houten"                , "bernard"      , "De malafide compagnon")
   , ("Eduard (Eddie) van Loon"           , "eduard"       , "De vasthoudende journalist")
-  , ("Pastoor Jojannes (Jan) Hendriks"   , "hendriks"     , "De beschonken priester")
+  , ("Pastoor Johannes (Jan) Hendriks"   , "hendriks"     , "De beschonken priester")
   , ("Julian van Mersbergen"             , "julian"       , "De baatzuchtige protegé")
   ]
 

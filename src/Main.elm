@@ -117,7 +117,9 @@ view _ model = div []
       [ id "personal", class "bar-section"]
       [ div [class "bar-bg", attribute "data-speed" "0.45", style "background-image" "url(\'images/gang.jpeg\')"] []
       , div [class "bar-overlay"] []
-      , div [class "section-content"] [viewFirstPage model]
+      , div [class "section-content"] 
+        [ h2 [class "section-title"] [text "Persoonlijke informatie"]
+        , viewFirstPage model]
       ]
   , section
       [ id "todo", class "bar-section"]
@@ -143,7 +145,10 @@ viewFirstPage model = div [class "about-cols"]
         LoggedIn m ->
           [ text ("logged in as " ++ m.name)
           , br [] []
-          , text ("RSVP status: " ++ Maybe.Extra.unwrap "{backend is nog niet geladen}" showrsvp m.rsvp)
+          , text ("RSVP status: " ++ Maybe.Extra.unwrap "{backend is nog niet geladen}" showrsvp m.rsvp ++ " ")
+          , button [] [text "Ik kom!"]
+          , text " "
+          , button [] [text "Ik kom niet"]
           , br [] []
           , case m.charstory of
               Nothing -> text "Je hebt nog geen karakter gekozen. Kies er een op de volgende pagina!"
@@ -162,9 +167,14 @@ viewSecondPage model = div [width 2000]
     ["alexander", "bernard", "brouwer", "dr lodewijk", "eduard", "elisabeth", "geerlings", "gerrit", "gijsbert", "hendriks", "janne", "julian", "marta", "michael", "rosalie", "susanna", "ten have", "theodoor"]
   )
   ++
-  [p [style "font-size" "xx-large"] [text (case gethover model |> Maybe.andThen id2namedis of
-    Nothing ->   "Kies een karakter"
-    Just (name, dis) ->  name ++ ", " ++ dis)]]
+  -- (case gethover model |> Maybe.andThen id2namedis of
+  --   Nothing -> [p [style "font-size" "xx-large"] [text "Kies een karakter"]]
+  --   Just (name, dis) -> [p [style "font-size" "xx-large", style "font-family" "hattinand"] [text (name ++ ", " ++ dis)]])
+  (case gethover model |> Maybe.andThen id2namedis of
+    Nothing -> [p [style "font-size" "xx-large"] [text "Kies een karakter"], br [] [], div [style "font-size" "xx-large", style "font-family" "hattinand", style "color" "rgba(0,0,0,0)"] [text "I'm invisible!"]]
+    Just (name, dis) -> [ p [style "font-size" "xx-large"] [text name]
+                        , br [] []
+                        , p [style "font-size" "xx-large", style "font-family" "hattinand"] [text dis]])
   ++
   ( case model of
       NotLoggedIn _ -> []
@@ -176,7 +186,9 @@ viewSecondPage model = div [width 2000]
             { styles = [ ( "width", "40%" ), ("color", "black"), ("class","helveticalarge") ]
             , title = "Bevestig je keuze"
             , content = [ text (String.join " " ["Weet je zeker dat je", name, "wil kiezen?"]) ]
-            , actionBar = [ dialogButton "Go back go back" (ChooseChar ""), dialogButton (String.join " " ["Kies", name]) BevestigChar]
+            , actionBar = [ dialogButton "Nee denk het niet" (ChooseChar "")
+                          , text "   "
+                          , dialogButton (String.join " " ["Kies", name]) BevestigChar]
             }
             (case m.charStatus of
               NotSelected -> Dialog.hidden

@@ -12474,6 +12474,7 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
 var $elm$html$Html$div = _VirtualDom_node('div');
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $author$project$Utils$relwidth = function (i) {
 	return A2(
@@ -12484,6 +12485,8 @@ var $author$project$Utils$relwidth = function (i) {
 var $elm$html$Html$section = _VirtualDom_node('section');
 var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Types$Login = {$: 'Login'};
 var $author$project$Types$PassChange = function (a) {
 	return {$: 'PassChange', a: a};
@@ -12551,8 +12554,6 @@ var $author$project$Database$showrsvp = function (r) {
 			return 'MAYBE';
 	}
 };
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $elm_community$maybe_extra$Maybe$Extra$unwrap = F3(
 	function (_default, f, m) {
 		if (m.$ === 'Nothing') {
@@ -12628,7 +12629,22 @@ var $author$project$Main$viewFirstPage = function (model) {
 								$elm$html$Html$text('logged in as ' + m.name),
 								A2($elm$html$Html$br, _List_Nil, _List_Nil),
 								$elm$html$Html$text(
-								'RSVP status: ' + A3($elm_community$maybe_extra$Maybe$Extra$unwrap, '{backend is nog niet geladen}', $author$project$Database$showrsvp, m.rsvp)),
+								'RSVP status: ' + (A3($elm_community$maybe_extra$Maybe$Extra$unwrap, '{backend is nog niet geladen}', $author$project$Database$showrsvp, m.rsvp) + ' ')),
+								A2(
+								$elm$html$Html$button,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Ik kom!')
+									])),
+								$elm$html$Html$text(' '),
+								A2(
+								$elm$html$Html$button,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Ik kom niet')
+									])),
 								A2($elm$html$Html$br, _List_Nil, _List_Nil),
 								function () {
 								var _v1 = m.charstory;
@@ -12709,7 +12725,7 @@ var $author$project$Karakters$allekarakters = _List_fromArray(
 		_Utils_Tuple3('Zuster Elisabeth Koster', 'elisabeth', 'De ijverige zuster'),
 		_Utils_Tuple3('Bernard van Houten', 'bernard', 'De malafide compagnon'),
 		_Utils_Tuple3('Eduard (Eddie) van Loon', 'eduard', 'De vasthoudende journalist'),
-		_Utils_Tuple3('Pastoor Jojannes (Jan) Hendriks', 'hendriks', 'De beschonken priester'),
+		_Utils_Tuple3('Pastoor Johannes (Jan) Hendriks', 'hendriks', 'De beschonken priester'),
 		_Utils_Tuple3('Julian van Mersbergen', 'julian', 'De baatzuchtige protegé')
 	]);
 var $author$project$Karakters$id2namedis = function (id) {
@@ -12871,33 +12887,69 @@ var $author$project$Main$viewSecondPage = function (model) {
 				_List_fromArray(
 					['alexander', 'bernard', 'brouwer', 'dr lodewijk', 'eduard', 'elisabeth', 'geerlings', 'gerrit', 'gijsbert', 'hendriks', 'janne', 'julian', 'marta', 'michael', 'rosalie', 'susanna', 'ten have', 'theodoor'])),
 			_Utils_ap(
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$p,
-						_List_fromArray(
+				function () {
+					var _v0 = A2(
+						$elm$core$Maybe$andThen,
+						$author$project$Karakters$id2namedis,
+						$author$project$Types$gethover(model));
+					if (_v0.$ === 'Nothing') {
+						return _List_fromArray(
 							[
-								A2($elm$html$Html$Attributes$style, 'font-size', 'xx-large')
-							]),
-						_List_fromArray(
+								A2(
+								$elm$html$Html$p,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'font-size', 'xx-large')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Kies een karakter')
+									])),
+								A2($elm$html$Html$br, _List_Nil, _List_Nil),
+								A2(
+								$elm$html$Html$div,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'font-size', 'xx-large'),
+										A2($elm$html$Html$Attributes$style, 'font-family', 'hattinand'),
+										A2($elm$html$Html$Attributes$style, 'color', 'rgba(0,0,0,0)')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('I\'m invisible!')
+									]))
+							]);
+					} else {
+						var _v1 = _v0.a;
+						var name = _v1.a;
+						var dis = _v1.b;
+						return _List_fromArray(
 							[
-								$elm$html$Html$text(
-								function () {
-									var _v0 = A2(
-										$elm$core$Maybe$andThen,
-										$author$project$Karakters$id2namedis,
-										$author$project$Types$gethover(model));
-									if (_v0.$ === 'Nothing') {
-										return 'Kies een karakter';
-									} else {
-										var _v1 = _v0.a;
-										var name = _v1.a;
-										var dis = _v1.b;
-										return name + (', ' + dis);
-									}
-								}())
-							]))
-					]),
+								A2(
+								$elm$html$Html$p,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'font-size', 'xx-large')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(name)
+									])),
+								A2($elm$html$Html$br, _List_Nil, _List_Nil),
+								A2(
+								$elm$html$Html$p,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'font-size', 'xx-large'),
+										A2($elm$html$Html$Attributes$style, 'font-family', 'hattinand')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text(dis)
+									]))
+							]);
+					}
+				}(),
 				function () {
 					if (model.$ === 'NotLoggedIn') {
 						return _List_Nil;
@@ -12923,8 +12975,9 @@ var $author$project$Main$viewSecondPage = function (model) {
 										[
 											A2(
 											$author$project$Main$dialogButton,
-											'Go back go back',
+											'Nee denk het niet',
 											$author$project$Types$ChooseChar('')),
+											$elm$html$Html$text('   '),
 											A2(
 											$author$project$Main$dialogButton,
 											A2(
@@ -13003,6 +13056,16 @@ var $author$project$Main$view = F2(
 								]),
 							_List_fromArray(
 								[
+									A2(
+									$elm$html$Html$h2,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$class('section-title')
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Persoonlijke informatie')
+										])),
 									$author$project$Main$viewFirstPage(model)
 								]))
 						])),
