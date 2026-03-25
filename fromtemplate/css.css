@@ -180,7 +180,7 @@ img {
 .section-content-wide {
     position: relative;
     z-index: 2;
-    max-width: 800cqw;
+    max-width: 400cqw;
     width: 100%;
     padding: 100px 30px;
     text-align: center;
