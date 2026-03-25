@@ -12602,6 +12602,8 @@ var $author$project$Main$viewFirstPage = function (model) {
 						var m = model.a;
 						return _List_fromArray(
 							[
+								$elm$html$Html$text('Vul hieronder je wachtwoord in:'),
+								A2($elm$html$Html$br, _List_Nil, _List_Nil),
 								A2(
 								$elm$html$Html$input,
 								_List_fromArray(
@@ -12626,10 +12628,11 @@ var $author$project$Main$viewFirstPage = function (model) {
 						var m = model.a;
 						return _List_fromArray(
 							[
-								$elm$html$Html$text('logged in as ' + m.name),
+								$elm$html$Html$text('Ingelogd als ' + m.name),
+								A2($elm$html$Html$br, _List_Nil, _List_Nil),
 								A2($elm$html$Html$br, _List_Nil, _List_Nil),
 								$elm$html$Html$text(
-								'RSVP status: ' + (A3($elm_community$maybe_extra$Maybe$Extra$unwrap, '{backend is nog niet geladen}', $author$project$Database$showrsvp, m.rsvp) + ' ')),
+								'RSVP-status: ' + (A3($elm_community$maybe_extra$Maybe$Extra$unwrap, '{backend is nog niet geladen}', $author$project$Database$showrsvp, m.rsvp) + ' ')),
 								A2(
 								$elm$html$Html$button,
 								_List_Nil,
@@ -12645,6 +12648,7 @@ var $author$project$Main$viewFirstPage = function (model) {
 									[
 										$elm$html$Html$text('Ik kom niet')
 									])),
+								A2($elm$html$Html$br, _List_Nil, _List_Nil),
 								A2($elm$html$Html$br, _List_Nil, _List_Nil),
 								function () {
 								var _v1 = m.charstory;

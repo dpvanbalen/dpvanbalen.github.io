@@ -139,16 +139,20 @@ viewFirstPage model = div [class "about-cols"]
   , div [class "about-col", class "helveticalarge"]
       (case model of
         NotLoggedIn m ->
-          [ input [placeholder "password", value m.password, onInput PassChange] []
+          [ text "Vul hieronder je wachtwoord in:"
+          , br [] []
+          , input [placeholder "password", value m.password, onInput PassChange] []
           , button [onClick Login] [text "Log in"]
           ]
         LoggedIn m ->
-          [ text ("logged in as " ++ m.name)
+          [ text ("Ingelogd als " ++ m.name)
           , br [] []
-          , text ("RSVP status: " ++ Maybe.Extra.unwrap "{backend is nog niet geladen}" showrsvp m.rsvp ++ " ")
+          , br [] []
+          , text ("RSVP-status: " ++ Maybe.Extra.unwrap "{backend is nog niet geladen}" showrsvp m.rsvp ++ " ")
           , button [] [text "Ik kom!"]
           , text " "
           , button [] [text "Ik kom niet"]
+          , br [] []
           , br [] []
           , case m.charstory of
               Nothing -> text "Je hebt nog geen karakter gekozen. Kies er een op de volgende pagina!"
