@@ -122,7 +122,7 @@ view _ model = div []
         , viewFirstPage model]
       ]
   , section
-      [ id "todo", class "bar-section"]
+      [ id "karakter", class "bar-section"]
       [ div [class "bar-bg", attribute "data-speed" "0.45", style "background-image" "url(\'images/vijver.jpeg\')"] []
       , div [class "bar-overlay"] []
       , div [class "section-content-wide", relwidth 80] [viewSecondPage model]

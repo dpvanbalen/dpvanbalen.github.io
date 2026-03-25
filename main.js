@@ -13073,7 +13073,7 @@ var $author$project$Main$view = F2(
 					$elm$html$Html$section,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$id('todo'),
+							$elm$html$Html$Attributes$id('karakter'),
 							$elm$html$Html$Attributes$class('bar-section')
 						]),
 					_List_fromArray(
