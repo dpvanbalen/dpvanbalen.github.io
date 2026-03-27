@@ -5,7 +5,7 @@ import Crypto.Strings.Types exposing (Passphrase, Plaintext, Ciphertext)
 import Random exposing (Seed, initialSeed)
 
 import Types exposing (..)
-import Dict exposing (Dict)
+import Dict exposing (..)
 import String exposing (startsWith)
 
 accounts : List String
@@ -21,15 +21,11 @@ findAccount password = case List.filter (doDecrypt password >> startsWith "name:
   _ -> Just "ERROR" -- once in a lifetime hash collision or a whoopsie
 
 
--- secrets : Dict String String
--- secrets = Dict.insert "David" "+960aUqUKWwriYjJV5JAQUbcizDf2dODPfgREwNbzxU=" Dict.empty
+secrets : Dict String String
+secrets = Dict.insert "elisabeth" "HQBosn/iSrB/uIdVIFjjZqF1IhWFCSiqeKIb40FBZGPlarGBKqJACxOCdCVu\nOg0f" Dict.empty
 
--- getSecret : String -> Maybe String
--- getSecret pass = findAccount pass 
---                |> Maybe.andThen (getSecret2 pass)
-
--- getSecret2 : String -> String -> Maybe String
--- getSecret2 key password = Maybe.map (doDecrypt password) (Dict.get key secrets)
+getSecret : String -> String -> Maybe String
+getSecret key password = Maybe.map (doDecrypt password) (Dict.get key secrets)
 
 doDecrypt : String -> String -> String
 doDecrypt password cypher = case decrypt password cypher of

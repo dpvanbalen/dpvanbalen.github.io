@@ -29,16 +29,18 @@ readRSVP oauth =
     , tracker = Nothing
     }
 
-parseRSVP : Nosj.Decoder (Dict String RSVP)
-parseRSVP = -- TODO: maybe the list needs transposing
+parseRSVP : Nosj.Decoder (Dict String (RSVP, Int))
+parseRSVP =
   Nosj.field "values" 
     (Nosj.map 
-      (List.map 
-        (\x -> case x of
-          (name :: rsvp :: _) -> (name, pRSVP rsvp)
-          _ -> ("",Nothing)
-        ) >> List.filterMap (\(n,r) -> r |> Maybe.andThen (\r2 -> if n=="" then Nothing else Just (n,r2)))
-          >> Dict.fromList
+      (List.indexedMap 
+        (\i x -> case x of
+          (name :: rsvp :: _) -> (name, Maybe.map (\y -> (y,i+1)) (pRSVP rsvp))
+          [name] -> (name, Just (Maybe, i+1))
+          [] -> ("",Nothing)
+        ) 
+      >> List.filterMap (\(n,r) -> r |> Maybe.andThen (\r2 -> if n=="" then Nothing else Just (n,r2)))
+      >> Dict.fromList
       )
       (Nosj.list 
         (Nosj.list 
@@ -46,12 +48,12 @@ parseRSVP = -- TODO: maybe the list needs transposing
       )
     )
 
-
 pRSVP : String -> Maybe RSVP
 pRSVP str = case str of
   "YES" -> Just Yes
   "NO" -> Just No
   "MAYBE" -> Just Maybe
+  "" -> Just Maybe
   _ -> Nothing
 
 showrsvp : RSVP -> String
@@ -61,10 +63,8 @@ showrsvp r = case r of
   Maybe -> "MAYBE"
 
 
-schrijfrsvp : RSVP -> Maybe Int -> String -> Cmd Msg
-schrijfrsvp rsvp idx oauth = case idx of
-  Nothing -> Cmd.none
-  Just ix -> Http.request
+schrijfrsvp : RSVP -> Int -> String -> Cmd Msg
+schrijfrsvp rsvp ix oauth = Http.request
     { method = "PUT"
     , headers = [Http.header "Authorization" ("Bearer "++oauth)]
     , url = url ("RSVP!B"++String.fromInt ix++"?valueInputOption=USER_ENTERED")
@@ -76,7 +76,58 @@ schrijfrsvp rsvp idx oauth = case idx of
 
 schrijfrsvpjson : RSVP -> Int -> Json.Value
 schrijfrsvpjson rsvp ix = Json.object
-  [ ("range", Json.string ("log!C" ++ String.fromInt ix))
+  [ ("range", Json.string ("RSVP!B" ++ String.fromInt ix))
   , ("majorDimension", Json.string "ROWS")
   , ("values", Json.list (Json.list Json.string) [[showrsvp rsvp]])
   ]
+
+readChar : String -> Cmd Msg
+readChar oauth =
+  Http.request
+    { method = "GET"
+    , headers = [Http.header "Authorization" ("Bearer " ++ oauth)] 
+    , url = url "chars!A2:C50"
+    , body = Http.emptyBody
+    , expect = Http.expectJson CharReceived parseChar
+    , timeout = Nothing
+    , tracker = Nothing
+    }
+
+--                             char    person        descr   ix
+parseChar : Nosj.Decoder (Dict String (Maybe String, String, Int))
+parseChar = 
+  Nosj.field "values" 
+    (Nosj.map 
+      (List.indexedMap 
+        (\i x -> case x of
+          (name :: char :: secret :: _) -> Just (char, (if name=="" then Nothing else Just name, secret, i+2))
+          _ -> Nothing
+        ) 
+      >> List.filterMap (\x -> x)
+      >> Dict.fromList
+      )
+      (Nosj.list 
+        (Nosj.list 
+          Nosj.string)
+      )
+    )
+
+
+schrijfchar : String -> Int -> String -> Cmd Msg
+schrijfchar name ix oauth = Http.request
+    { method = "PUT"
+    , headers = [Http.header "Authorization" ("Bearer "++oauth)]
+    , url = url ("chars!A"++String.fromInt ix++"?valueInputOption=USER_ENTERED")
+    , body = Http.jsonBody (schrijfcharjson name ix)
+    , expect = Http.expectWhatever CharWritten
+    , timeout = Nothing
+    , tracker = Nothing
+    }
+
+schrijfcharjson : String -> Int -> Json.Value
+schrijfcharjson name ix = Json.object
+  [ ("range", Json.string ("chars!A" ++ String.fromInt ix))
+  , ("majorDimension", Json.string "ROWS")
+  , ("values", Json.list (Json.list Json.string) [[name]])
+  ]
+

@@ -7,6 +7,7 @@ import Html.Events exposing (..)
 import Http exposing (Error(..))
 import Json.Decode
 import Json.Encode as Json
+import Task
 import Time
 
 import Types exposing (..)
@@ -17,6 +18,7 @@ import Dict
 
 import Dialog
 import Maybe.Extra
+import Maybe
 import Utils exposing (..)
 import Karakters exposing (..)
 
@@ -48,8 +50,8 @@ main =
 
 init : String -> (Model, Cmd Msg, Audio.AudioCmd Msg)
 init oauthtoken =
-  ( NotLoggedIn { password = "", fromrsvpsheet = Nothing, chars = Dict.empty, poirot = Nothing, hover = Nothing }
-  , readRSVP oauthtoken
+  ( NotLoggedIn { password = "", fromrsvpsheet = Nothing, chars = Dict.empty, poirot = (Nothing, Nothing), hover = Nothing, oauth = oauthtoken, fromcharsheet = Nothing}
+  , Cmd.batch [readRSVP oauthtoken, readChar oauthtoken]
   , Audio.loadAudio PoirotReady "https:dpvanbalen.github.io/images/poirot.mp3"
   )
 
@@ -66,23 +68,32 @@ update _ msg model = let todo = (model, Cmd.none, Audio.cmdNone) in
     RSVPReceived result -> case result of
       Ok data -> (NotLoggedIn {m | fromrsvpsheet = Just data}, Cmd.none, Audio.cmdNone)
       _ -> todo
+    CharReceived result -> case result of
+      Ok data -> (NotLoggedIn {m | fromcharsheet = Just data}, Cmd.none, Audio.cmdNone)
+      _ -> todo
     PoirotReady p -> case p of
-      -- Ok p2 -> (NotLoggedIn {m | poirot = Just (p2, now)}, Cmd.none, Audio.cmdNone) TODO: need to add time to model
+      Ok p2 -> (NotLoggedIn {m | poirot = (Just p2, Nothing)}, Task.perform PoirotGoing Time.now, Audio.cmdNone)
       _ -> todo
     Login -> case findAccount m.password of
       Nothing -> todo -- wrong password
       Just name -> ( LoggedIn { name = name
-                              , rsvp = Maybe.map (\x -> Maybe.withDefault Maybe (Dict.get name x)) m.fromrsvpsheet
-                              , charstory = Nothing
+                              , rsvp   = m.fromrsvpsheet |> Maybe.andThen (\x -> Dict.get name x) |> Maybe.map Tuple.first 
+                              , rsvpix = m.fromrsvpsheet |> Maybe.andThen (\x -> Dict.get name x) |> Maybe.map Tuple.second
+                              , fromcharsheet = m.fromcharsheet
+                              , charstory = m.fromcharsheet |> Maybe.andThen (\x -> getcharstory name x)
                               , charStatus = NotSelected
                               , poirot = m.poirot
-                              , hover = m.hover}
+                              , hover = m.hover
+                              , oauth = m.oauth
+                              }
                    , Cmd.none
                    , Audio.cmdNone)
     HoverStart n -> (NotLoggedIn {m | hover = Just n}, Cmd.none, Audio.cmdNone)
     HoverEnd n   -> (NotLoggedIn {m | hover = case m.hover of
                                                 Nothing -> Nothing
                                                 Just n2 -> if n==n2 then Nothing else Just n2}, Cmd.none, Audio.cmdNone)
+    RSVPWritten _ -> (model, readRSVP m.oauth, Audio.cmdNone)
+    CharWritten _ -> (model, readChar m.oauth, Audio.cmdNone)
     _ -> todo
    LoggedIn m -> case msg of
     HoverStart n -> (LoggedIn {m | hover = Just n}, Cmd.none, Audio.cmdNone)
@@ -93,9 +104,26 @@ update _ msg model = let todo = (model, Cmd.none, Audio.cmdNone) in
                                         NotSelected ->  if i == "" then NotSelected else Confirming i
                                         Confirming _ -> if i == "" then NotSelected else m.charStatus
       in (LoggedIn {m | charStatus = newstatus}, Cmd.none, Audio.cmdNone)
+    BevestigChar -> case m.charStatus of
+      NotSelected -> todo
+      Confirming char -> case m.fromcharsheet |> Maybe.andThen (\d -> Dict.get char d) of
+          Just (Nothing, _, ix) -> (LoggedIn {m | charStatus = NotSelected}, schrijfchar m.name ix m.oauth, Audio.cmdNone)
+          _ -> todo
     RSVPReceived result -> case result of
-      Ok data -> (LoggedIn {m | rsvp = Just (Maybe.withDefault Maybe (Dict.get m.name data))}, Cmd.none, Audio.cmdNone)
+      Ok data -> (LoggedIn {m | rsvp   = Dict.get m.name data |> Maybe.map Tuple.first
+                              , rsvpix = Dict.get m.name data |> Maybe.map Tuple.second
+                            }, Cmd.none, Audio.cmdNone)
       _ -> todo
+    CharReceived result -> case result of
+      Ok data -> (LoggedIn {m | fromcharsheet = Just data
+                              , charstory = getcharstory m.name data
+                            }, Cmd.none, Audio.cmdNone)
+      _ -> todo
+    RSVPButton rsvp -> case m.rsvpix of
+      Nothing -> todo
+      Just idx -> (LoggedIn m, schrijfrsvp rsvp idx m.oauth, Audio.cmdNone)
+    RSVPWritten _ -> (model, readRSVP m.oauth, Audio.cmdNone)
+    CharWritten _ -> (model, readChar m.oauth, Audio.cmdNone)
     _ -> todo
 
 
@@ -143,63 +171,87 @@ viewFirstPage model = div [class "about-cols"]
           , br [] []
           , input [placeholder "password", value m.password, onInput PassChange] []
           , button [onClick Login] [text "Log in"]
+          , br [] []
+          , br [] []
+          , text ("Debug: " ++ Maybe.Extra.unwrap "geen" (Dict.size >> String.fromInt) m.fromrsvpsheet)
           ]
         LoggedIn m ->
           [ text ("Ingelogd als " ++ m.name)
           , br [] []
           , br [] []
           , text ("RSVP-status: " ++ Maybe.Extra.unwrap "{backend is nog niet geladen}" showrsvp m.rsvp ++ " ")
-          , button [] [text "Ik kom!"]
+          , button [onClick (RSVPButton Yes)] [text "Ik kom!"]
           , text " "
-          , button [] [text "Ik kom niet"]
+          , button [onClick (RSVPButton No)] [text "Ik kom niet"]
           , br [] []
           , br [] []
           , case m.charstory of
               Nothing -> text "Je hebt nog geen karakter gekozen. Kies er een op de volgende pagina!"
-              Just (name, story) -> text (String.join "" ["Je bent ", name, "! Houd de volgende informatie strikt geheim: ", story])
+              Just (name, _) -> text (String.join "" ["Je bent ", name, "! Klik op je polaroid voor meer informatie."])
           ]
       )
   ]
 
 
 viewSecondPage : Model -> Html Msg
-viewSecondPage model = div [width 2000] 
-  ((List.map
-    (\id -> input [type_ "image", src ("images/chars/"++id++" main.png"), cqhheight 250
-                  , onMouseEnter (HoverStart id), onMouseLeave (HoverEnd id) -- fix hover na inloggen
-                  , onClick (ChooseChar id)] [])
-    ["alexander", "bernard", "brouwer", "dr lodewijk", "eduard", "elisabeth", "geerlings", "gerrit", "gijsbert", "hendriks", "janne", "julian", "marta", "michael", "rosalie", "susanna", "ten have", "theodoor"]
-  )
-  ++
-  -- (case gethover model |> Maybe.andThen id2namedis of
-  --   Nothing -> [p [style "font-size" "xx-large"] [text "Kies een karakter"]]
-  --   Just (name, dis) -> [p [style "font-size" "xx-large", style "font-family" "hattinand"] [text (name ++ ", " ++ dis)]])
-  (case gethover model |> Maybe.andThen id2namedis of
-    Nothing -> [p [style "font-size" "xx-large"] [text "Kies een karakter"], br [] [], div [style "font-size" "xx-large", style "font-family" "hattinand", style "color" "rgba(0,0,0,0)"] [text "I'm invisible!"]]
-    Just (name, dis) -> [ p [style "font-size" "xx-large"] [text name]
-                        , br [] []
-                        , p [style "font-size" "xx-large", style "font-family" "hattinand"] [text dis]])
-  ++
-  ( case model of
-      NotLoggedIn _ -> []
-      LoggedIn m -> let name = case id2namedis (showselectedchar m.charStatus) of
-                          Nothing -> ""
-                          Just (nm, _) -> nm
-        in
-        [ Dialog.render
-            { styles = [ ( "width", "40%" ), ("color", "black"), ("class","helveticalarge") ]
-            , title = "Bevestig je keuze"
-            , content = [ text (String.join " " ["Weet je zeker dat je", name, "wil kiezen?"]) ]
-            , actionBar = [ dialogButton "Nee denk het niet" (ChooseChar "")
-                          , text "   "
-                          , dialogButton (String.join " " ["Kies", name]) BevestigChar]
-            }
-            (case m.charStatus of
-              NotSelected -> Dialog.hidden
-              Confirming _ -> Dialog.visible
-            )
-        ]
-  ))
+viewSecondPage model = let youarealreadychar = case model of
+                                                  NotLoggedIn _ -> Nothing
+                                                  LoggedIn m -> Maybe.map Tuple.first m.charstory
+                           charsheet = case model of
+                                                  NotLoggedIn m -> m.fromcharsheet
+                                                  LoggedIn m -> m.fromcharsheet
+                           checked id = Maybe.withDefault "main" (Maybe.map (\id2 -> if id==id2 then "checked" else "main") youarealreadychar)
+  in div [width 2000]
+    ((List.map
+      (\id -> input ([ type_ "image", src ("images/chars/"++id++" " ++ checked id ++".png"), cqhheight 250
+            ,  onMouseEnter (HoverStart id), onMouseLeave (HoverEnd id)
+            ] ++ case charsheet |> Maybe.andThen (\x -> Dict.get id x) |> Maybe.andThen (\(x,_,_) -> x) of
+                  Nothing -> case model of
+                    LoggedIn _ -> if Maybe.Extra.isJust youarealreadychar
+                                    then [style "cursor" "default"]
+                                    else [style "cursor" "pointer", onClick (ChooseChar id)]
+                    NotLoggedIn _ -> [style "cursor" "default"]
+                  Just _ -> if youarealreadychar == Just id
+                              then [style "cursor" "pointer", onClick (ChooseChar id)]
+                              else [style "cursor" "not-allowed", style "opacity" "50%"]
+        ) []
+      )
+      ["theodoor", "marta", "susanna", "gijsbert", "rosalie", "michael", "gerrit", "alexander", "brouwer", "janne", "dr lodewijk", "elisabeth", "bernard", "eduard", "geerlings", "hendriks", "julian", "ten have"]
+    )
+    ++
+    (case Maybe.andThen id2namedis (Maybe.Extra.orList [gethover model, youarealreadychar]) of
+      Nothing -> [p [style "font-size" "xx-large"] [text "Kies een karakter"], br [] [], div [style "font-size" "xx-large", style "font-family" "hattinand", style "color" "rgba(0,0,0,0)"] [text "I'm invisible!"]]
+      Just (name, dis)   -> [ p [style "font-size" "xx-large"] [text name]
+                            , br [] []
+                            , p [style "font-size" "xx-large", style "font-family" "hattinand"] [text dis]])
+    ++
+    ( case model of
+        NotLoggedIn _ -> []
+        LoggedIn m -> let name = case id2namedis (showselectedchar m.charStatus) of
+                            Nothing -> ""
+                            Just (nm, _) -> nm
+          in
+          [ Dialog.render
+              { styles = [ ( "width", "40%" ), ("color", "black"), ("class","helveticalarge") ]
+              , title = case m.charstory of
+                  Nothing -> "Bevestig je keuze"
+                  Just (char,_) -> char
+              , content = [ text (case m.charstory of
+                  Nothing -> (String.join " " ["Weet je zeker dat je", name, "wil kiezen?"])
+                  Just (char, story) -> Maybe.withDefault "" (getSecret char story)) ]
+              , actionBar = case m.charstory of
+                Nothing ->  [ dialogButton "Nee denk het niet" (ChooseChar "")
+                            , text "   "
+                            , dialogButton (String.join " " ["Kies", name]) BevestigChar
+                            ]
+                Just _ -> [dialogButton "Ik houd dit voor me" (ChooseChar "")]
+              }
+              (case m.charStatus of
+                NotSelected -> Dialog.hidden
+                Confirming _ -> Dialog.visible
+              )
+          ]
+    ))
 
 
 dialogButton : String -> Msg -> Html Msg
@@ -214,10 +266,11 @@ dialogButton caption msg =
 audio : Audio.AudioData -> Model -> Audio.Audio
 audio _ model =
   let maybeplay x = case x of
-        Nothing -> Audio.silence
-        Just (muziek,tijd) -> Audio.audio muziek tijd
+        (Just muziek, Just tijd) -> Audio.audio muziek tijd
+        _ -> Audio.silence
   in case model of
-    _ -> Audio.silence
+    NotLoggedIn m -> maybeplay m.poirot
+    LoggedIn m -> maybeplay m.poirot
 
 
 

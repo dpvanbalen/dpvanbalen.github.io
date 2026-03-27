@@ -14,18 +14,26 @@
     <link rel="stylesheet" href="fromtemplate/css.css">
     <link rel="stylesheet" href="font.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script>
+    function playPoirot(){
+        document.getElementById('poirot').play();
+        document.getElementById('poirotbutton').src = "images/audio on.png";
+        document.getElementById('poirotbutton').setAttribute("onclick","mutePoirot()");
+    }
+    function mutePoirot(){
+        document.getElementById('poirot').pause();
+        document.getElementById('poirotbutton').src = "images/audio off.png";
+        document.getElementById('poirotbutton').setAttribute("onclick","playPoirot()");
+    }</script>
 </head>
 <body>
 
     <!-- Navigation -->
     <nav id="foo-nav">
         <div class="nav-container">
+            <input id="poirotbutton" type="image" src="images/audio off.png" height="60%" onclick="playPoirot()" ></input>
             <a href="#home" class="nav-logo">Murder Mystery</a>
-            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+            <audio id="poirot"><source src="https://dpvanbalen.github.io/images/poirot.mp3"></audio>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#game">Uitleg</a></li>
                 <li><a href="#personal">Persoonlijk</a></li>
@@ -86,7 +94,7 @@ Als gasten probeer je diegene te ontmaskeren: wie pleegde de moord? Maar de moor
             <h2 class="section-title">Praktische informatie</h2>
             <div class="about-cols" style="translate:-10%">
                 <div class="about-col">
-                    <p class="helveticalarge">Je bent welkom vanaf 15:00. Zorg dat je er om 15:30 bent, zodat we kunnen beginnen!
+                    <p class="helveticalarge">Je bent welkom vanaf 15:00. Zorg dat je er om 16:00 bent, zodat we kunnen beginnen!
 <br><br>
 Je kunt ook blijven slapen. Laat het dan van te voren even weten, zodat we genoeg bedden hebben.</p>
 <div class="about-thumb" style="width:300px;height:300px"><img src="images/kaart.jpeg" alt="kaartje :)"></div>
@@ -111,7 +119,7 @@ Let op: de Kerkstraat is eenrichtingsverkeer, inrijden vanaf het centrum.</p>
 
     <!-- Footer -->
     <footer id="foo-footer">
-        <p>Copyright &copy; 2026 me</p>
+        <p>Copyright &copy; 2026 me. Pas hacken na het feestje.</p>
     </footer>
     
     <script src="initelm.js"></script>

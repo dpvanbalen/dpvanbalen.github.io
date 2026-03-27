@@ -4683,6 +4683,52 @@ var _Regex_splitAtMost = F3(function(n, re, str)
 });
 
 var _Regex_infinity = Infinity;
+
+
+
+function _Time_now(millisToPosix)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		callback(_Scheduler_succeed(millisToPosix(Date.now())));
+	});
+}
+
+var _Time_setInterval = F2(function(interval, task)
+{
+	return _Scheduler_binding(function(callback)
+	{
+		var id = setInterval(function() { _Scheduler_rawSpawn(task); }, interval);
+		return function() { clearInterval(id); };
+	});
+});
+
+function _Time_here()
+{
+	return _Scheduler_binding(function(callback)
+	{
+		callback(_Scheduler_succeed(
+			A2($elm$time$Time$customZone, -(new Date().getTimezoneOffset()), _List_Nil)
+		));
+	});
+}
+
+
+function _Time_getZoneName()
+{
+	return _Scheduler_binding(function(callback)
+	{
+		try
+		{
+			var name = $elm$time$Time$Name(Intl.DateTimeFormat().resolvedOptions().timeZone);
+		}
+		catch (e)
+		{
+			var name = $elm$time$Time$Offset(new Date().getTimezoneOffset());
+		}
+		callback(_Scheduler_succeed(name));
+	});
+}
 var $elm$core$Maybe$Nothing = {$: 'Nothing'};
 var $elm$core$Basics$identity = function (x) {
 	return x;
@@ -4794,16 +4840,21 @@ var $MartinSStewart$elm_audio$Audio$silence = $MartinSStewart$elm_audio$Audio$gr
 var $author$project$Main$audio = F2(
 	function (_v0, model) {
 		var maybeplay = function (x) {
-			if (x.$ === 'Nothing') {
-				return $MartinSStewart$elm_audio$Audio$silence;
-			} else {
-				var _v3 = x.a;
-				var muziek = _v3.a;
-				var tijd = _v3.b;
+			if ((x.a.$ === 'Just') && (x.b.$ === 'Just')) {
+				var muziek = x.a.a;
+				var tijd = x.b.a;
 				return A2($MartinSStewart$elm_audio$Audio$audio, muziek, tijd);
+			} else {
+				return $MartinSStewart$elm_audio$Audio$silence;
 			}
 		};
-		return $MartinSStewart$elm_audio$Audio$silence;
+		if (model.$ === 'NotLoggedIn') {
+			var m = model.a;
+			return maybeplay(m.poirot);
+		} else {
+			var m = model.a;
+			return maybeplay(m.poirot);
+		}
 	});
 var $elm$core$Result$Err = function (a) {
 	return {$: 'Err', a: a};
@@ -7274,8 +7325,8 @@ var $MartinSStewart$elm_audio$Audio$loadAudio = F2(
 					$MartinSStewart$elm_audio$Audio$enumeratedResults)
 			});
 	});
-var $author$project$Types$RSVPReceived = function (a) {
-	return {$: 'RSVPReceived', a: a};
+var $author$project$Types$CharReceived = function (a) {
+	return {$: 'CharReceived', a: a};
 };
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
@@ -7388,64 +7439,39 @@ var $elm$http$Http$Header = F2(
 		return {$: 'Header', a: a, b: b};
 	});
 var $elm$http$Http$header = $elm$http$Http$Header;
-var $elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (maybeValue.$ === 'Just') {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
 var $elm$json$Json$Decode$list = _Json_decodeList;
-var $author$project$Types$Maybe = {$: 'Maybe'};
-var $author$project$Types$No = {$: 'No'};
-var $author$project$Types$Yes = {$: 'Yes'};
-var $author$project$Database$pRSVP = function (str) {
-	switch (str) {
-		case 'YES':
-			return $elm$core$Maybe$Just($author$project$Types$Yes);
-		case 'NO':
-			return $elm$core$Maybe$Just($author$project$Types$No);
-		case 'MAYBE':
-			return $elm$core$Maybe$Just($author$project$Types$Maybe);
-		default:
-			return $elm$core$Maybe$Nothing;
-	}
-};
-var $author$project$Database$parseRSVP = A2(
+var $author$project$Database$parseChar = A2(
 	$elm$json$Json$Decode$field,
 	'values',
 	A2(
 		$elm$json$Json$Decode$map,
 		A2(
 			$elm$core$Basics$composeR,
-			$elm$core$List$map(
-				function (x) {
-					if (x.b && x.b.b) {
-						var name = x.a;
-						var _v1 = x.b;
-						var rsvp = _v1.a;
-						return _Utils_Tuple2(
-							name,
-							$author$project$Database$pRSVP(rsvp));
-					} else {
-						return _Utils_Tuple2('', $elm$core$Maybe$Nothing);
-					}
-				}),
+			$elm$core$List$indexedMap(
+				F2(
+					function (i, x) {
+						if ((x.b && x.b.b) && x.b.b.b) {
+							var name = x.a;
+							var _v1 = x.b;
+							var _char = _v1.a;
+							var _v2 = _v1.b;
+							var secret = _v2.a;
+							return $elm$core$Maybe$Just(
+								_Utils_Tuple2(
+									_char,
+									_Utils_Tuple3(
+										(name === '') ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(name),
+										secret,
+										i + 2)));
+						} else {
+							return $elm$core$Maybe$Nothing;
+						}
+					})),
 			A2(
 				$elm$core$Basics$composeR,
 				$elm$core$List$filterMap(
-					function (_v2) {
-						var n = _v2.a;
-						var r = _v2.b;
-						return A2(
-							$elm$core$Maybe$andThen,
-							function (r2) {
-								return (n === '') ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
-									_Utils_Tuple2(n, r2));
-							},
-							r);
+					function (x) {
+						return x;
 					}),
 				$elm$core$Dict$fromList)),
 		$elm$json$Json$Decode$list(
@@ -7603,6 +7629,111 @@ var $elm$http$Http$request = function (r) {
 var $author$project$Database$url = function (sheet) {
 	return 'https://sheets.googleapis.com/v4/spreadsheets/1_R5_jdrepOfS9xX9Yqq5i2I8q_isOJAgI7kmY7qacK0/values/' + sheet;
 };
+var $author$project$Database$readChar = function (oauth) {
+	return $elm$http$Http$request(
+		{
+			body: $elm$http$Http$emptyBody,
+			expect: A2($elm$http$Http$expectJson, $author$project$Types$CharReceived, $author$project$Database$parseChar),
+			headers: _List_fromArray(
+				[
+					A2($elm$http$Http$header, 'Authorization', 'Bearer ' + oauth)
+				]),
+			method: 'GET',
+			timeout: $elm$core$Maybe$Nothing,
+			tracker: $elm$core$Maybe$Nothing,
+			url: $author$project$Database$url('chars!A2:C50')
+		});
+};
+var $author$project$Types$RSVPReceived = function (a) {
+	return {$: 'RSVPReceived', a: a};
+};
+var $author$project$Types$Maybe = {$: 'Maybe'};
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $author$project$Types$No = {$: 'No'};
+var $author$project$Types$Yes = {$: 'Yes'};
+var $author$project$Database$pRSVP = function (str) {
+	switch (str) {
+		case 'YES':
+			return $elm$core$Maybe$Just($author$project$Types$Yes);
+		case 'NO':
+			return $elm$core$Maybe$Just($author$project$Types$No);
+		case 'MAYBE':
+			return $elm$core$Maybe$Just($author$project$Types$Maybe);
+		case '':
+			return $elm$core$Maybe$Just($author$project$Types$Maybe);
+		default:
+			return $elm$core$Maybe$Nothing;
+	}
+};
+var $author$project$Database$parseRSVP = A2(
+	$elm$json$Json$Decode$field,
+	'values',
+	A2(
+		$elm$json$Json$Decode$map,
+		A2(
+			$elm$core$Basics$composeR,
+			$elm$core$List$indexedMap(
+				F2(
+					function (i, x) {
+						if (x.b) {
+							if (x.b.b) {
+								var name = x.a;
+								var _v1 = x.b;
+								var rsvp = _v1.a;
+								return _Utils_Tuple2(
+									name,
+									A2(
+										$elm$core$Maybe$map,
+										function (y) {
+											return _Utils_Tuple2(y, i + 1);
+										},
+										$author$project$Database$pRSVP(rsvp)));
+							} else {
+								var name = x.a;
+								return _Utils_Tuple2(
+									name,
+									$elm$core$Maybe$Just(
+										_Utils_Tuple2($author$project$Types$Maybe, i + 1)));
+							}
+						} else {
+							return _Utils_Tuple2('', $elm$core$Maybe$Nothing);
+						}
+					})),
+			A2(
+				$elm$core$Basics$composeR,
+				$elm$core$List$filterMap(
+					function (_v2) {
+						var n = _v2.a;
+						var r = _v2.b;
+						return A2(
+							$elm$core$Maybe$andThen,
+							function (r2) {
+								return (n === '') ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(
+									_Utils_Tuple2(n, r2));
+							},
+							r);
+					}),
+				$elm$core$Dict$fromList)),
+		$elm$json$Json$Decode$list(
+			$elm$json$Json$Decode$list($elm$json$Json$Decode$string))));
 var $author$project$Database$readRSVP = function (oauth) {
 	return $elm$http$Http$request(
 		{
@@ -7621,8 +7752,21 @@ var $author$project$Database$readRSVP = function (oauth) {
 var $author$project$Main$init = function (oauthtoken) {
 	return _Utils_Tuple3(
 		$author$project$Types$NotLoggedIn(
-			{chars: $elm$core$Dict$empty, fromrsvpsheet: $elm$core$Maybe$Nothing, hover: $elm$core$Maybe$Nothing, password: '', poirot: $elm$core$Maybe$Nothing}),
-		$author$project$Database$readRSVP(oauthtoken),
+			{
+				chars: $elm$core$Dict$empty,
+				fromcharsheet: $elm$core$Maybe$Nothing,
+				fromrsvpsheet: $elm$core$Maybe$Nothing,
+				hover: $elm$core$Maybe$Nothing,
+				oauth: oauthtoken,
+				password: '',
+				poirot: _Utils_Tuple2($elm$core$Maybe$Nothing, $elm$core$Maybe$Nothing)
+			}),
+		$elm$core$Platform$Cmd$batch(
+			_List_fromArray(
+				[
+					$author$project$Database$readRSVP(oauthtoken),
+					$author$project$Database$readChar(oauthtoken)
+				])),
 		A2($MartinSStewart$elm_audio$Audio$loadAudio, $author$project$Types$PoirotReady, 'https:dpvanbalen.github.io/images/poirot.mp3'));
 };
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
@@ -7637,6 +7781,9 @@ var $author$project$Types$LoggedIn = function (a) {
 	return {$: 'LoggedIn', a: a};
 };
 var $author$project$Types$NotSelected = {$: 'NotSelected'};
+var $author$project$Types$PoirotGoing = function (a) {
+	return {$: 'PoirotGoing', a: a};
+};
 var $MartinSStewart$elm_audio$Audio$AudioCmdGroup = function (a) {
 	return {$: 'AudioCmdGroup', a: a};
 };
@@ -12278,15 +12425,192 @@ var $author$project$Secrets$findAccount = function (password) {
 		return $elm$core$Maybe$Nothing;
 	}
 };
-var $elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return $elm$core$Maybe$Just(
-				f(value));
-		} else {
+var $elm_community$maybe_extra$Maybe$Extra$orList = function (maybes) {
+	orList:
+	while (true) {
+		if (!maybes.b) {
 			return $elm$core$Maybe$Nothing;
+		} else {
+			if (maybes.a.$ === 'Nothing') {
+				var _v1 = maybes.a;
+				var rest = maybes.b;
+				var $temp$maybes = rest;
+				maybes = $temp$maybes;
+				continue orList;
+			} else {
+				var answer = maybes.a.a;
+				return $elm$core$Maybe$Just(answer);
+			}
 		}
+	}
+};
+var $author$project$Karakters$getcharstory = function (name) {
+	return A2(
+		$elm$core$Basics$composeR,
+		$elm$core$Dict$toList,
+		A2(
+			$elm$core$Basics$composeR,
+			$elm$core$List$filter(
+				function (_v0) {
+					var _char = _v0.a;
+					var _v1 = _v0.b;
+					var nm = _v1.a;
+					var secret = _v1.b;
+					if (nm.$ === 'Nothing') {
+						return false;
+					} else {
+						var nm2 = nm.a;
+						return _Utils_eq(nm2, name);
+					}
+				}),
+			A2(
+				$elm$core$Basics$composeR,
+				$elm$core$List$map(
+					function (_v3) {
+						var _char = _v3.a;
+						var _v4 = _v3.b;
+						var secret = _v4.b;
+						return $elm$core$Maybe$Just(
+							_Utils_Tuple2(_char, secret));
+					}),
+				$elm_community$maybe_extra$Maybe$Extra$orList)));
+};
+var $elm$time$Time$Name = function (a) {
+	return {$: 'Name', a: a};
+};
+var $elm$time$Time$Offset = function (a) {
+	return {$: 'Offset', a: a};
+};
+var $elm$time$Time$Zone = F2(
+	function (a, b) {
+		return {$: 'Zone', a: a, b: b};
+	});
+var $elm$time$Time$customZone = $elm$time$Time$Zone;
+var $elm$time$Time$now = _Time_now($elm$time$Time$millisToPosix);
+var $author$project$Types$CharWritten = function (a) {
+	return {$: 'CharWritten', a: a};
+};
+var $elm$http$Http$expectBytesResponse = F2(
+	function (toMsg, toResult) {
+		return A3(
+			_Http_expect,
+			'arraybuffer',
+			_Http_toDataView,
+			A2($elm$core$Basics$composeR, toResult, toMsg));
+	});
+var $elm$http$Http$expectWhatever = function (toMsg) {
+	return A2(
+		$elm$http$Http$expectBytesResponse,
+		toMsg,
+		$elm$http$Http$resolve(
+			function (_v0) {
+				return $elm$core$Result$Ok(_Utils_Tuple0);
+			}));
+};
+var $elm$http$Http$jsonBody = function (value) {
+	return A2(
+		_Http_pair,
+		'application/json',
+		A2($elm$json$Json$Encode$encode, 0, value));
+};
+var $author$project$Database$schrijfcharjson = F2(
+	function (name, ix) {
+		return $elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'range',
+					$elm$json$Json$Encode$string(
+						'chars!A' + $elm$core$String$fromInt(ix))),
+					_Utils_Tuple2(
+					'majorDimension',
+					$elm$json$Json$Encode$string('ROWS')),
+					_Utils_Tuple2(
+					'values',
+					A2(
+						$elm$json$Json$Encode$list,
+						$elm$json$Json$Encode$list($elm$json$Json$Encode$string),
+						_List_fromArray(
+							[
+								_List_fromArray(
+								[name])
+							])))
+				]));
+	});
+var $author$project$Database$schrijfchar = F3(
+	function (name, ix, oauth) {
+		return $elm$http$Http$request(
+			{
+				body: $elm$http$Http$jsonBody(
+					A2($author$project$Database$schrijfcharjson, name, ix)),
+				expect: $elm$http$Http$expectWhatever($author$project$Types$CharWritten),
+				headers: _List_fromArray(
+					[
+						A2($elm$http$Http$header, 'Authorization', 'Bearer ' + oauth)
+					]),
+				method: 'PUT',
+				timeout: $elm$core$Maybe$Nothing,
+				tracker: $elm$core$Maybe$Nothing,
+				url: $author$project$Database$url(
+					'chars!A' + ($elm$core$String$fromInt(ix) + '?valueInputOption=USER_ENTERED'))
+			});
+	});
+var $author$project$Types$RSVPWritten = function (a) {
+	return {$: 'RSVPWritten', a: a};
+};
+var $author$project$Database$showrsvp = function (r) {
+	switch (r.$) {
+		case 'Yes':
+			return 'YES';
+		case 'No':
+			return 'NO';
+		default:
+			return 'MAYBE';
+	}
+};
+var $author$project$Database$schrijfrsvpjson = F2(
+	function (rsvp, ix) {
+		return $elm$json$Json$Encode$object(
+			_List_fromArray(
+				[
+					_Utils_Tuple2(
+					'range',
+					$elm$json$Json$Encode$string(
+						'RSVP!B' + $elm$core$String$fromInt(ix))),
+					_Utils_Tuple2(
+					'majorDimension',
+					$elm$json$Json$Encode$string('ROWS')),
+					_Utils_Tuple2(
+					'values',
+					A2(
+						$elm$json$Json$Encode$list,
+						$elm$json$Json$Encode$list($elm$json$Json$Encode$string),
+						_List_fromArray(
+							[
+								_List_fromArray(
+								[
+									$author$project$Database$showrsvp(rsvp)
+								])
+							])))
+				]));
+	});
+var $author$project$Database$schrijfrsvp = F3(
+	function (rsvp, ix, oauth) {
+		return $elm$http$Http$request(
+			{
+				body: $elm$http$Http$jsonBody(
+					A2($author$project$Database$schrijfrsvpjson, rsvp, ix)),
+				expect: $elm$http$Http$expectWhatever($author$project$Types$RSVPWritten),
+				headers: _List_fromArray(
+					[
+						A2($elm$http$Http$header, 'Authorization', 'Bearer ' + oauth)
+					]),
+				method: 'PUT',
+				timeout: $elm$core$Maybe$Nothing,
+				tracker: $elm$core$Maybe$Nothing,
+				url: $author$project$Database$url(
+					'RSVP!B' + ($elm$core$String$fromInt(ix) + '?valueInputOption=USER_ENTERED'))
+			});
 	});
 var $author$project$Main$update = F3(
 	function (_v0, msg, model) {
@@ -12319,32 +12643,79 @@ var $author$project$Main$update = F3(
 					} else {
 						return todo;
 					}
+				case 'CharReceived':
+					var result = msg.a;
+					if (result.$ === 'Ok') {
+						var data = result.a;
+						return _Utils_Tuple3(
+							$author$project$Types$NotLoggedIn(
+								_Utils_update(
+									m,
+									{
+										fromcharsheet: $elm$core$Maybe$Just(data)
+									})),
+							$elm$core$Platform$Cmd$none,
+							$MartinSStewart$elm_audio$Audio$cmdNone);
+					} else {
+						return todo;
+					}
 				case 'PoirotReady':
 					var p = msg.a;
-					return todo;
+					if (p.$ === 'Ok') {
+						var p2 = p.a;
+						return _Utils_Tuple3(
+							$author$project$Types$NotLoggedIn(
+								_Utils_update(
+									m,
+									{
+										poirot: _Utils_Tuple2(
+											$elm$core$Maybe$Just(p2),
+											$elm$core$Maybe$Nothing)
+									})),
+							A2($elm$core$Task$perform, $author$project$Types$PoirotGoing, $elm$time$Time$now),
+							$MartinSStewart$elm_audio$Audio$cmdNone);
+					} else {
+						return todo;
+					}
 				case 'Login':
-					var _v5 = $author$project$Secrets$findAccount(m.password);
-					if (_v5.$ === 'Nothing') {
+					var _v6 = $author$project$Secrets$findAccount(m.password);
+					if (_v6.$ === 'Nothing') {
 						return todo;
 					} else {
-						var name = _v5.a;
+						var name = _v6.a;
 						return _Utils_Tuple3(
 							$author$project$Types$LoggedIn(
 								{
 									charStatus: $author$project$Types$NotSelected,
-									charstory: $elm$core$Maybe$Nothing,
+									charstory: A2(
+										$elm$core$Maybe$andThen,
+										function (x) {
+											return A2($author$project$Karakters$getcharstory, name, x);
+										},
+										m.fromcharsheet),
+									fromcharsheet: m.fromcharsheet,
 									hover: m.hover,
 									name: name,
+									oauth: m.oauth,
 									poirot: m.poirot,
 									rsvp: A2(
 										$elm$core$Maybe$map,
-										function (x) {
-											return A2(
-												$elm$core$Maybe$withDefault,
-												$author$project$Types$Maybe,
-												A2($elm$core$Dict$get, name, x));
-										},
-										m.fromrsvpsheet)
+										$elm$core$Tuple$first,
+										A2(
+											$elm$core$Maybe$andThen,
+											function (x) {
+												return A2($elm$core$Dict$get, name, x);
+											},
+											m.fromrsvpsheet)),
+									rsvpix: A2(
+										$elm$core$Maybe$map,
+										$elm$core$Tuple$second,
+										A2(
+											$elm$core$Maybe$andThen,
+											function (x) {
+												return A2($elm$core$Dict$get, name, x);
+											},
+											m.fromrsvpsheet))
 								}),
 							$elm$core$Platform$Cmd$none,
 							$MartinSStewart$elm_audio$Audio$cmdNone);
@@ -12368,16 +12739,26 @@ var $author$project$Main$update = F3(
 								m,
 								{
 									hover: function () {
-										var _v6 = m.hover;
-										if (_v6.$ === 'Nothing') {
+										var _v7 = m.hover;
+										if (_v7.$ === 'Nothing') {
 											return $elm$core$Maybe$Nothing;
 										} else {
-											var n2 = _v6.a;
+											var n2 = _v7.a;
 											return _Utils_eq(n, n2) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(n2);
 										}
 									}()
 								})),
 						$elm$core$Platform$Cmd$none,
+						$MartinSStewart$elm_audio$Audio$cmdNone);
+				case 'RSVPWritten':
+					return _Utils_Tuple3(
+						model,
+						$author$project$Database$readRSVP(m.oauth),
+						$MartinSStewart$elm_audio$Audio$cmdNone);
+				case 'CharWritten':
+					return _Utils_Tuple3(
+						model,
+						$author$project$Database$readChar(m.oauth),
 						$MartinSStewart$elm_audio$Audio$cmdNone);
 				default:
 					return todo;
@@ -12404,11 +12785,11 @@ var $author$project$Main$update = F3(
 								m,
 								{
 									hover: function () {
-										var _v8 = m.hover;
-										if (_v8.$ === 'Nothing') {
+										var _v9 = m.hover;
+										if (_v9.$ === 'Nothing') {
 											return $elm$core$Maybe$Nothing;
 										} else {
-											var n2 = _v8.a;
+											var n2 = _v9.a;
 											return _Utils_eq(n, n2) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(n2);
 										}
 									}()
@@ -12418,8 +12799,8 @@ var $author$project$Main$update = F3(
 				case 'ChooseChar':
 					var i = msg.a;
 					var newstatus = function () {
-						var _v9 = m.charStatus;
-						if (_v9.$ === 'NotSelected') {
+						var _v10 = m.charStatus;
+						if (_v10.$ === 'NotSelected') {
 							return (i === '') ? $author$project$Types$NotSelected : $author$project$Types$Confirming(i);
 						} else {
 							return (i === '') ? $author$project$Types$NotSelected : m.charStatus;
@@ -12432,6 +12813,33 @@ var $author$project$Main$update = F3(
 								{charStatus: newstatus})),
 						$elm$core$Platform$Cmd$none,
 						$MartinSStewart$elm_audio$Audio$cmdNone);
+				case 'BevestigChar':
+					var _v11 = m.charStatus;
+					if (_v11.$ === 'NotSelected') {
+						return todo;
+					} else {
+						var _char = _v11.a;
+						var _v12 = A2(
+							$elm$core$Maybe$andThen,
+							function (d) {
+								return A2($elm$core$Dict$get, _char, d);
+							},
+							m.fromcharsheet);
+						if ((_v12.$ === 'Just') && (_v12.a.a.$ === 'Nothing')) {
+							var _v13 = _v12.a;
+							var _v14 = _v13.a;
+							var ix = _v13.c;
+							return _Utils_Tuple3(
+								$author$project$Types$LoggedIn(
+									_Utils_update(
+										m,
+										{charStatus: $author$project$Types$NotSelected})),
+								A3($author$project$Database$schrijfchar, m.name, ix, m.oauth),
+								$MartinSStewart$elm_audio$Audio$cmdNone);
+						} else {
+							return todo;
+						}
+					}
 				case 'RSVPReceived':
 					var result = msg.a;
 					if (result.$ === 'Ok') {
@@ -12441,17 +12849,59 @@ var $author$project$Main$update = F3(
 								_Utils_update(
 									m,
 									{
-										rsvp: $elm$core$Maybe$Just(
-											A2(
-												$elm$core$Maybe$withDefault,
-												$author$project$Types$Maybe,
-												A2($elm$core$Dict$get, m.name, data)))
+										rsvp: A2(
+											$elm$core$Maybe$map,
+											$elm$core$Tuple$first,
+											A2($elm$core$Dict$get, m.name, data)),
+										rsvpix: A2(
+											$elm$core$Maybe$map,
+											$elm$core$Tuple$second,
+											A2($elm$core$Dict$get, m.name, data))
 									})),
 							$elm$core$Platform$Cmd$none,
 							$MartinSStewart$elm_audio$Audio$cmdNone);
 					} else {
 						return todo;
 					}
+				case 'CharReceived':
+					var result = msg.a;
+					if (result.$ === 'Ok') {
+						var data = result.a;
+						return _Utils_Tuple3(
+							$author$project$Types$LoggedIn(
+								_Utils_update(
+									m,
+									{
+										charstory: A2($author$project$Karakters$getcharstory, m.name, data),
+										fromcharsheet: $elm$core$Maybe$Just(data)
+									})),
+							$elm$core$Platform$Cmd$none,
+							$MartinSStewart$elm_audio$Audio$cmdNone);
+					} else {
+						return todo;
+					}
+				case 'RSVPButton':
+					var rsvp = msg.a;
+					var _v17 = m.rsvpix;
+					if (_v17.$ === 'Nothing') {
+						return todo;
+					} else {
+						var idx = _v17.a;
+						return _Utils_Tuple3(
+							$author$project$Types$LoggedIn(m),
+							A3($author$project$Database$schrijfrsvp, rsvp, idx, m.oauth),
+							$MartinSStewart$elm_audio$Audio$cmdNone);
+					}
+				case 'RSVPWritten':
+					return _Utils_Tuple3(
+						model,
+						$author$project$Database$readRSVP(m.oauth),
+						$MartinSStewart$elm_audio$Audio$cmdNone);
+				case 'CharWritten':
+					return _Utils_Tuple3(
+						model,
+						$author$project$Database$readChar(m.oauth),
+						$MartinSStewart$elm_audio$Audio$cmdNone);
 				default:
 					return todo;
 			}
@@ -12490,6 +12940,9 @@ var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Types$Login = {$: 'Login'};
 var $author$project$Types$PassChange = function (a) {
 	return {$: 'PassChange', a: a};
+};
+var $author$project$Types$RSVPButton = function (a) {
+	return {$: 'RSVPButton', a: a};
 };
 var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$button = _VirtualDom_node('button');
@@ -12544,15 +12997,25 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 };
 var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
-var $author$project$Database$showrsvp = function (r) {
-	switch (r.$) {
-		case 'Yes':
-			return 'YES';
-		case 'No':
-			return 'NO';
-		default:
-			return 'MAYBE';
-	}
+var $elm$core$Dict$sizeHelp = F2(
+	function (n, dict) {
+		sizeHelp:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return n;
+			} else {
+				var left = dict.d;
+				var right = dict.e;
+				var $temp$n = A2($elm$core$Dict$sizeHelp, n + 1, right),
+					$temp$dict = left;
+				n = $temp$n;
+				dict = $temp$dict;
+				continue sizeHelp;
+			}
+		}
+	});
+var $elm$core$Dict$size = function (dict) {
+	return A2($elm$core$Dict$sizeHelp, 0, dict);
 };
 var $elm_community$maybe_extra$Maybe$Extra$unwrap = F3(
 	function (_default, f, m) {
@@ -12622,7 +13085,15 @@ var $author$project$Main$viewFirstPage = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$text('Log in')
-									]))
+									])),
+								A2($elm$html$Html$br, _List_Nil, _List_Nil),
+								A2($elm$html$Html$br, _List_Nil, _List_Nil),
+								$elm$html$Html$text(
+								'Debug: ' + A3(
+									$elm_community$maybe_extra$Maybe$Extra$unwrap,
+									'geen',
+									A2($elm$core$Basics$composeR, $elm$core$Dict$size, $elm$core$String$fromInt),
+									m.fromrsvpsheet))
 							]);
 					} else {
 						var m = model.a;
@@ -12635,7 +13106,11 @@ var $author$project$Main$viewFirstPage = function (model) {
 								'RSVP-status: ' + (A3($elm_community$maybe_extra$Maybe$Extra$unwrap, '{backend is nog niet geladen}', $author$project$Database$showrsvp, m.rsvp) + ' ')),
 								A2(
 								$elm$html$Html$button,
-								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$Types$RSVPButton($author$project$Types$Yes))
+									]),
 								_List_fromArray(
 									[
 										$elm$html$Html$text('Ik kom!')
@@ -12643,7 +13118,11 @@ var $author$project$Main$viewFirstPage = function (model) {
 								$elm$html$Html$text(' '),
 								A2(
 								$elm$html$Html$button,
-								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick(
+										$author$project$Types$RSVPButton($author$project$Types$No))
+									]),
 								_List_fromArray(
 									[
 										$elm$html$Html$text('Ik kom niet')
@@ -12657,13 +13136,12 @@ var $author$project$Main$viewFirstPage = function (model) {
 								} else {
 									var _v2 = _v1.a;
 									var name = _v2.a;
-									var story = _v2.b;
 									return $elm$html$Html$text(
 										A2(
 											$elm$core$String$join,
 											'',
 											_List_fromArray(
-												['Je bent ', name, '! Houd de volgende informatie strikt geheim: ', story])));
+												['Je bent ', name, '! Klik op je polaroid voor meer informatie.'])));
 								}
 							}()
 							]);
@@ -12700,6 +13178,14 @@ var $author$project$Main$dialogButton = F2(
 				[
 					$elm$html$Html$text(caption)
 				]));
+	});
+var $author$project$Secrets$secrets = A3($elm$core$Dict$insert, 'elisabeth', 'HQBosn/iSrB/uIdVIFjjZqF1IhWFCSiqeKIb40FBZGPlarGBKqJACxOCdCVu\nOg0f', $elm$core$Dict$empty);
+var $author$project$Secrets$getSecret = F2(
+	function (key, password) {
+		return A2(
+			$elm$core$Maybe$map,
+			$author$project$Secrets$doDecrypt(password),
+			A2($elm$core$Dict$get, key, $author$project$Secrets$secrets));
 	});
 var $author$project$Types$gethover = function (model) {
 	if (model.$ === 'LoggedIn') {
@@ -12748,6 +13234,13 @@ var $author$project$Karakters$id2namedis = function (id) {
 			_Utils_Tuple2(name, dis));
 	} else {
 		return $elm$core$Maybe$Nothing;
+	}
+};
+var $elm_community$maybe_extra$Maybe$Extra$isJust = function (m) {
+	if (m.$ === 'Nothing') {
+		return false;
+	} else {
+		return true;
 	}
 };
 var $elm$html$Html$Events$onMouseEnter = function (msg) {
@@ -12862,6 +13355,34 @@ var $elm$html$Html$Attributes$width = function (n) {
 		$elm$core$String$fromInt(n));
 };
 var $author$project$Main$viewSecondPage = function (model) {
+	var youarealreadychar = function () {
+		if (model.$ === 'NotLoggedIn') {
+			return $elm$core$Maybe$Nothing;
+		} else {
+			var m = model.a;
+			return A2($elm$core$Maybe$map, $elm$core$Tuple$first, m.charstory);
+		}
+	}();
+	var checked = function (id) {
+		return A2(
+			$elm$core$Maybe$withDefault,
+			'main',
+			A2(
+				$elm$core$Maybe$map,
+				function (id2) {
+					return _Utils_eq(id, id2) ? 'checked' : 'main';
+				},
+				youarealreadychar));
+	};
+	var charsheet = function () {
+		if (model.$ === 'NotLoggedIn') {
+			var m = model.a;
+			return m.fromcharsheet;
+		} else {
+			var m = model.a;
+			return m.fromcharsheet;
+		}
+	}();
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -12874,29 +13395,79 @@ var $author$project$Main$viewSecondPage = function (model) {
 				function (id) {
 					return A2(
 						$elm$html$Html$input,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$type_('image'),
-								$elm$html$Html$Attributes$src('images/chars/' + (id + ' main.png')),
-								$author$project$Utils$cqhheight(250),
-								$elm$html$Html$Events$onMouseEnter(
-								$author$project$Types$HoverStart(id)),
-								$elm$html$Html$Events$onMouseLeave(
-								$author$project$Types$HoverEnd(id)),
-								$elm$html$Html$Events$onClick(
-								$author$project$Types$ChooseChar(id))
-							]),
+						_Utils_ap(
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$type_('image'),
+									$elm$html$Html$Attributes$src(
+									'images/chars/' + (id + (' ' + (checked(id) + '.png')))),
+									$author$project$Utils$cqhheight(250),
+									$elm$html$Html$Events$onMouseEnter(
+									$author$project$Types$HoverStart(id)),
+									$elm$html$Html$Events$onMouseLeave(
+									$author$project$Types$HoverEnd(id))
+								]),
+							function () {
+								var _v0 = A2(
+									$elm$core$Maybe$andThen,
+									function (_v1) {
+										var x = _v1.a;
+										return x;
+									},
+									A2(
+										$elm$core$Maybe$andThen,
+										function (x) {
+											return A2($elm$core$Dict$get, id, x);
+										},
+										charsheet));
+								if (_v0.$ === 'Nothing') {
+									if (model.$ === 'LoggedIn') {
+										return $elm_community$maybe_extra$Maybe$Extra$isJust(youarealreadychar) ? _List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$style, 'cursor', 'default')
+											]) : _List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+												$elm$html$Html$Events$onClick(
+												$author$project$Types$ChooseChar(id))
+											]);
+									} else {
+										return _List_fromArray(
+											[
+												A2($elm$html$Html$Attributes$style, 'cursor', 'default')
+											]);
+									}
+								} else {
+									return _Utils_eq(
+										youarealreadychar,
+										$elm$core$Maybe$Just(id)) ? _List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$style, 'cursor', 'pointer'),
+											$elm$html$Html$Events$onClick(
+											$author$project$Types$ChooseChar(id))
+										]) : _List_fromArray(
+										[
+											A2($elm$html$Html$Attributes$style, 'cursor', 'not-allowed'),
+											A2($elm$html$Html$Attributes$style, 'opacity', '50%')
+										]);
+								}
+							}()),
 						_List_Nil);
 				},
 				_List_fromArray(
-					['alexander', 'bernard', 'brouwer', 'dr lodewijk', 'eduard', 'elisabeth', 'geerlings', 'gerrit', 'gijsbert', 'hendriks', 'janne', 'julian', 'marta', 'michael', 'rosalie', 'susanna', 'ten have', 'theodoor'])),
+					['theodoor', 'marta', 'susanna', 'gijsbert', 'rosalie', 'michael', 'gerrit', 'alexander', 'brouwer', 'janne', 'dr lodewijk', 'elisabeth', 'bernard', 'eduard', 'geerlings', 'hendriks', 'julian', 'ten have'])),
 			_Utils_ap(
 				function () {
-					var _v0 = A2(
+					var _v3 = A2(
 						$elm$core$Maybe$andThen,
 						$author$project$Karakters$id2namedis,
-						$author$project$Types$gethover(model));
-					if (_v0.$ === 'Nothing') {
+						$elm_community$maybe_extra$Maybe$Extra$orList(
+							_List_fromArray(
+								[
+									$author$project$Types$gethover(model),
+									youarealreadychar
+								])));
+					if (_v3.$ === 'Nothing') {
 						return _List_fromArray(
 							[
 								A2(
@@ -12924,9 +13495,9 @@ var $author$project$Main$viewSecondPage = function (model) {
 									]))
 							]);
 					} else {
-						var _v1 = _v0.a;
-						var name = _v1.a;
-						var dis = _v1.b;
+						var _v4 = _v3.a;
+						var name = _v4.a;
+						var dis = _v4.b;
 						return _List_fromArray(
 							[
 								A2(
@@ -12960,13 +13531,13 @@ var $author$project$Main$viewSecondPage = function (model) {
 					} else {
 						var m = model.a;
 						var name = function () {
-							var _v4 = $author$project$Karakters$id2namedis(
+							var _v12 = $author$project$Karakters$id2namedis(
 								$author$project$Types$showselectedchar(m.charStatus));
-							if (_v4.$ === 'Nothing') {
+							if (_v12.$ === 'Nothing') {
 								return '';
 							} else {
-								var _v5 = _v4.a;
-								var nm = _v5.a;
+								var _v13 = _v12.a;
+								var nm = _v13.a;
 								return nm;
 							}
 						}();
@@ -12975,30 +13546,56 @@ var $author$project$Main$viewSecondPage = function (model) {
 								A2(
 								$billstclair$elm_dialog$Dialog$render,
 								{
-									actionBar: _List_fromArray(
-										[
-											A2(
-											$author$project$Main$dialogButton,
-											'Nee denk het niet',
-											$author$project$Types$ChooseChar('')),
-											$elm$html$Html$text('   '),
-											A2(
-											$author$project$Main$dialogButton,
-											A2(
-												$elm$core$String$join,
-												' ',
-												_List_fromArray(
-													['Kies', name])),
-											$author$project$Types$BevestigChar)
-										]),
+									actionBar: function () {
+										var _v6 = m.charstory;
+										if (_v6.$ === 'Nothing') {
+											return _List_fromArray(
+												[
+													A2(
+													$author$project$Main$dialogButton,
+													'Nee denk het niet',
+													$author$project$Types$ChooseChar('')),
+													$elm$html$Html$text('   '),
+													A2(
+													$author$project$Main$dialogButton,
+													A2(
+														$elm$core$String$join,
+														' ',
+														_List_fromArray(
+															['Kies', name])),
+													$author$project$Types$BevestigChar)
+												]);
+										} else {
+											return _List_fromArray(
+												[
+													A2(
+													$author$project$Main$dialogButton,
+													'Ik houd dit voor me',
+													$author$project$Types$ChooseChar(''))
+												]);
+										}
+									}(),
 									content: _List_fromArray(
 										[
 											$elm$html$Html$text(
-											A2(
-												$elm$core$String$join,
-												' ',
-												_List_fromArray(
-													['Weet je zeker dat je', name, 'wil kiezen?'])))
+											function () {
+												var _v7 = m.charstory;
+												if (_v7.$ === 'Nothing') {
+													return A2(
+														$elm$core$String$join,
+														' ',
+														_List_fromArray(
+															['Weet je zeker dat je', name, 'wil kiezen?']));
+												} else {
+													var _v8 = _v7.a;
+													var _char = _v8.a;
+													var story = _v8.b;
+													return A2(
+														$elm$core$Maybe$withDefault,
+														'',
+														A2($author$project$Secrets$getSecret, _char, story));
+												}
+											}())
 										]),
 									styles: _List_fromArray(
 										[
@@ -13006,11 +13603,20 @@ var $author$project$Main$viewSecondPage = function (model) {
 											_Utils_Tuple2('color', 'black'),
 											_Utils_Tuple2('class', 'helveticalarge')
 										]),
-									title: 'Bevestig je keuze'
+									title: function () {
+										var _v9 = m.charstory;
+										if (_v9.$ === 'Nothing') {
+											return 'Bevestig je keuze';
+										} else {
+											var _v10 = _v9.a;
+											var _char = _v10.a;
+											return _char;
+										}
+									}()
 								},
 								function () {
-									var _v3 = m.charStatus;
-									if (_v3.$ === 'NotSelected') {
+									var _v11 = m.charStatus;
+									if (_v11.$ === 'NotSelected') {
 										return $billstclair$elm_dialog$Dialog$hidden;
 									} else {
 										return $billstclair$elm_dialog$Dialog$visible;
