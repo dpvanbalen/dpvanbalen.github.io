@@ -13637,6 +13637,43 @@ var $author$project$Main$view = F2(
 					$elm$html$Html$section,
 					_List_fromArray(
 						[
+							$elm$html$Html$Attributes$id('karakter'),
+							$elm$html$Html$Attributes$class('bar-section')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('bar-bg'),
+									A2($elm$html$Html$Attributes$attribute, 'data-speed', '0.45'),
+									A2($elm$html$Html$Attributes$style, 'background-image', 'url(\'images/vijver.jpeg\')')
+								]),
+							_List_Nil),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('bar-overlay')
+								]),
+							_List_Nil),
+							A2(
+							$elm$html$Html$div,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('section-content-wide'),
+									$author$project$Utils$relwidth(80)
+								]),
+							_List_fromArray(
+								[
+									$author$project$Main$viewSecondPage(model)
+								]))
+						])),
+					A2(
+					$elm$html$Html$section,
+					_List_fromArray(
+						[
 							$elm$html$Html$Attributes$id('personal'),
 							$elm$html$Html$Attributes$class('bar-section')
 						]),
@@ -13677,43 +13714,6 @@ var $author$project$Main$view = F2(
 											$elm$html$Html$text('Persoonlijke informatie')
 										])),
 									$author$project$Main$viewFirstPage(model)
-								]))
-						])),
-					A2(
-					$elm$html$Html$section,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$id('karakter'),
-							$elm$html$Html$Attributes$class('bar-section')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('bar-bg'),
-									A2($elm$html$Html$Attributes$attribute, 'data-speed', '0.45'),
-									A2($elm$html$Html$Attributes$style, 'background-image', 'url(\'images/vijver.jpeg\')')
-								]),
-							_List_Nil),
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('bar-overlay')
-								]),
-							_List_Nil),
-							A2(
-							$elm$html$Html$div,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$class('section-content-wide'),
-									$author$project$Utils$relwidth(80)
-								]),
-							_List_fromArray(
-								[
-									$author$project$Main$viewSecondPage(model)
 								]))
 						]))
 				]));
