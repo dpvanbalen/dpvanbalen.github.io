@@ -12997,26 +12997,6 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 };
 var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
-var $elm$core$Dict$sizeHelp = F2(
-	function (n, dict) {
-		sizeHelp:
-		while (true) {
-			if (dict.$ === 'RBEmpty_elm_builtin') {
-				return n;
-			} else {
-				var left = dict.d;
-				var right = dict.e;
-				var $temp$n = A2($elm$core$Dict$sizeHelp, n + 1, right),
-					$temp$dict = left;
-				n = $temp$n;
-				dict = $temp$dict;
-				continue sizeHelp;
-			}
-		}
-	});
-var $elm$core$Dict$size = function (dict) {
-	return A2($elm$core$Dict$sizeHelp, 0, dict);
-};
 var $elm_community$maybe_extra$Maybe$Extra$unwrap = F3(
 	function (_default, f, m) {
 		if (m.$ === 'Nothing') {
@@ -13085,15 +13065,7 @@ var $author$project$Main$viewFirstPage = function (model) {
 								_List_fromArray(
 									[
 										$elm$html$Html$text('Log in')
-									])),
-								A2($elm$html$Html$br, _List_Nil, _List_Nil),
-								A2($elm$html$Html$br, _List_Nil, _List_Nil),
-								$elm$html$Html$text(
-								'Debug: ' + A3(
-									$elm_community$maybe_extra$Maybe$Extra$unwrap,
-									'geen',
-									A2($elm$core$Basics$composeR, $elm$core$Dict$size, $elm$core$String$fromInt),
-									m.fromrsvpsheet))
+									]))
 							]);
 					} else {
 						var m = model.a;
@@ -13132,7 +13104,7 @@ var $author$project$Main$viewFirstPage = function (model) {
 								function () {
 								var _v1 = m.charstory;
 								if (_v1.$ === 'Nothing') {
-									return $elm$html$Html$text('Je hebt nog geen karakter gekozen. Kies er een op de volgende pagina!');
+									return $elm$html$Html$text('Je hebt nog geen karakter gekozen. Kies er een op de vorige pagina!');
 								} else {
 									var _v2 = _v1.a;
 									var name = _v2.a;

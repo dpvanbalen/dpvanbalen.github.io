@@ -173,9 +173,6 @@ viewFirstPage model = div [class "about-cols"]
           , br [] []
           , input [placeholder "password", value m.password, onInput PassChange] []
           , button [onClick Login] [text "Log in"]
-          , br [] []
-          , br [] []
-          , text ("Debug: " ++ Maybe.Extra.unwrap "geen" (Dict.size >> String.fromInt) m.fromrsvpsheet)
           ]
         LoggedIn m ->
           [ text ("Ingelogd als " ++ m.name)
@@ -188,7 +185,7 @@ viewFirstPage model = div [class "about-cols"]
           , br [] []
           , br [] []
           , case m.charstory of
-              Nothing -> text "Je hebt nog geen karakter gekozen. Kies er een op de volgende pagina!"
+              Nothing -> text "Je hebt nog geen karakter gekozen. Kies er een op de vorige pagina!"
               Just (name, _) -> text (String.join "" ["Je bent ", name, "! Klik op je polaroid voor meer informatie."])
           ]
       )
