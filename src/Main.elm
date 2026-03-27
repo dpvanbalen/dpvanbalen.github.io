@@ -141,19 +141,21 @@ subscriptions _ _ = Sub.none
 
 view : Audio.AudioData -> Model -> Html Msg
 view _ model = div []
-  [ section
+  [ 
+    section
+      [ id "karakter", class "bar-section"]
+      [ div [class "bar-bg", attribute "data-speed" "0.45", style "background-image" "url(\'images/vijver.jpeg\')"] []
+      , div [class "bar-overlay"] []
+      , div [class "section-content-wide", relwidth 80] [viewSecondPage model]
+      ]
+  , 
+    section
       [ id "personal", class "bar-section"]
       [ div [class "bar-bg", attribute "data-speed" "0.45", style "background-image" "url(\'images/gang.jpeg\')"] []
       , div [class "bar-overlay"] []
       , div [class "section-content"] 
         [ h2 [class "section-title"] [text "Persoonlijke informatie"]
         , viewFirstPage model]
-      ]
-  , section
-      [ id "karakter", class "bar-section"]
-      [ div [class "bar-bg", attribute "data-speed" "0.45", style "background-image" "url(\'images/vijver.jpeg\')"] []
-      , div [class "bar-overlay"] []
-      , div [class "section-content-wide", relwidth 80] [viewSecondPage model]
       ]
   ]
 
