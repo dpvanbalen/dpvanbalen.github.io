@@ -13069,7 +13069,7 @@ var $author$project$Main$viewFirstPage = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('\r\n          Je hebt een persoonlijk wachtwoord gekregen: hiermee kun je je karakter kiezen. Je krijgt alle informatie die je nodig hebt om jezelf vrij te pleiten (of verdacht te maken).\r\n          Voel je vrij om je zo veel of weinig in te leven in je karaker als je wilt en leuk vindt. Ga all out met een kostuum of kom alleen met de intentie om te winnen — alles is goed!\r\n        ')
+								$elm$html$Html$text('\r\n          Je hebt een persoonlijk wachtwoord gekregen: hiermee kun je je personage kiezen. Je krijgt alle informatie die je nodig hebt om jezelf vrij te pleiten (of verdacht te maken).\r\n          Voel je vrij om je zo veel of weinig in te leven in je karaker als je wilt en leuk vindt. Ga all out met een kostuum of kom alleen met de intentie om te winnen — alles is goed!\r\n        ')
 							]))
 					])),
 				A2(
@@ -13143,7 +13143,7 @@ var $author$project$Main$viewFirstPage = function (model) {
 								function () {
 								var _v1 = m.charstory;
 								if (_v1.$ === 'Nothing') {
-									return $elm$html$Html$text('Je hebt nog geen karakter gekozen. Kies er een op de vorige pagina!');
+									return $elm$html$Html$text('Je hebt nog geen personage gekozen. Kies er een op de vorige pagina!');
 								} else {
 									var _v2 = _v1.a;
 									var id = _v2.a;
@@ -13457,7 +13457,7 @@ var $author$project$Main$viewSecondPage = function (model) {
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Kies een karakter')
+										$elm$html$Html$text('Kies een personage')
 									])),
 								A2($elm$html$Html$br, _List_Nil, _List_Nil),
 								A2(
@@ -13616,7 +13616,7 @@ var $author$project$Main$view = F2(
 					$elm$html$Html$section,
 					_List_fromArray(
 						[
-							$elm$html$Html$Attributes$id('karakter'),
+							$elm$html$Html$Attributes$id('personage'),
 							$elm$html$Html$Attributes$class('bar-section')
 						]),
 					_List_fromArray(
