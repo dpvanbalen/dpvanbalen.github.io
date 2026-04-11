@@ -50,17 +50,17 @@ parseRSVP =
 
 pRSVP : String -> Maybe RSVP
 pRSVP str = case str of
-  "YES" -> Just Yes
-  "NO" -> Just No
-  "MAYBE" -> Just Maybe
+  "Ja" -> Just Yes
+  "Nee" -> Just No
+  "Misschien" -> Just Maybe
   "" -> Just Maybe
   _ -> Nothing
 
 showrsvp : RSVP -> String
 showrsvp r = case r of
-  Yes -> "YES"
-  No -> "NO"
-  Maybe -> "MAYBE"
+  Yes -> "Ja"
+  No -> "Nee"
+  Maybe -> "Misschien"
 
 
 schrijfrsvp : RSVP -> Int -> String -> Cmd Msg

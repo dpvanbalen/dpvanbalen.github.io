@@ -41,7 +41,9 @@ findAccount password = case List.filter (doDecrypt password >> startsWith "name:
 
 
 secrets : Dict String String
-secrets = Dict.insert "elisabeth" "HQBosn/iSrB/uIdVIFjjZqF1IhWFCSiqeKIb40FBZGPlarGBKqJACxOCdCVu\nOg0f" Dict.empty
+secrets = Dict.fromList 
+  [ ("elisabeth","HQBosn/iSrB/uIdVIFjjZqF1IhWFCSiqeKIb40FBZGPlarGBKqJACxOCdCVu\nOg0f")
+  ]
 
 getSecret : String -> String -> Maybe String
 getSecret key password = Maybe.map (doDecrypt password) (Dict.get key secrets)

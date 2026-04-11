@@ -7671,11 +7671,11 @@ var $author$project$Types$No = {$: 'No'};
 var $author$project$Types$Yes = {$: 'Yes'};
 var $author$project$Database$pRSVP = function (str) {
 	switch (str) {
-		case 'YES':
+		case 'Ja':
 			return $elm$core$Maybe$Just($author$project$Types$Yes);
-		case 'NO':
+		case 'Nee':
 			return $elm$core$Maybe$Just($author$project$Types$No);
-		case 'MAYBE':
+		case 'Misschien':
 			return $elm$core$Maybe$Just($author$project$Types$Maybe);
 		case '':
 			return $elm$core$Maybe$Just($author$project$Types$Maybe);
@@ -12561,11 +12561,11 @@ var $author$project$Types$RSVPWritten = function (a) {
 var $author$project$Database$showrsvp = function (r) {
 	switch (r.$) {
 		case 'Yes':
-			return 'YES';
+			return 'Ja';
 		case 'No':
-			return 'NO';
+			return 'Nee';
 		default:
-			return 'MAYBE';
+			return 'Misschien';
 	}
 };
 var $author$project$Database$schrijfrsvpjson = F2(
@@ -13197,7 +13197,11 @@ var $author$project$Main$dialogButton = F2(
 					$elm$html$Html$text(caption)
 				]));
 	});
-var $author$project$Secrets$secrets = A3($elm$core$Dict$insert, 'elisabeth', 'HQBosn/iSrB/uIdVIFjjZqF1IhWFCSiqeKIb40FBZGPlarGBKqJACxOCdCVu\nOg0f', $elm$core$Dict$empty);
+var $author$project$Secrets$secrets = $elm$core$Dict$fromList(
+	_List_fromArray(
+		[
+			_Utils_Tuple2('elisabeth', 'HQBosn/iSrB/uIdVIFjjZqF1IhWFCSiqeKIb40FBZGPlarGBKqJACxOCdCVu\nOg0f')
+		]));
 var $author$project$Secrets$getSecret = F2(
 	function (key, password) {
 		return A2(
