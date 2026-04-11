@@ -7789,7 +7789,7 @@ var $MartinSStewart$elm_audio$Audio$AudioCmdGroup = function (a) {
 };
 var $MartinSStewart$elm_audio$Audio$cmdNone = $MartinSStewart$elm_audio$Audio$AudioCmdGroup(_List_Nil);
 var $author$project$Secrets$accounts = _List_fromArray(
-	['eCeM75xMenG/KHjgfv/MQJGRmqapJVvLfbmRLV8p3G8=']);
+	['eCeM75xMenG/KHjgfv/MQJGRmqapJVvLfbmRLV8p3G8=', 'LUYEOHmRZ4iocP3J67VJ5IpKBJgIFbDak/K/qewCZh8=', 'LUYEOHmRZ4iocP3J67VJ5Mp+ofOHWGzd7MeBZhKRBpI=', 'LUYEOHmRZ4iocP3J67VJ5JFHDeUMApZPkeE1XcO2aA0=', 'LUYEOHmRZ4iocP3J67VJ5OMgmjfG5l65M4JYwseblN4=', 'LUYEOHmRZ4iocP3J67VJ5P9QUDv9l/F5Geic7d228rg=', 'LUYEOHmRZ4iocP3J67VJ5JGkYbLrIxUZCkHhMVbp7aM=', 'LUYEOHmRZ4iocP3J67VJ5LU6CjcAgv84s4xhIUTjDfg=', 'LUYEOHmRZ4iocP3J67VJ5B48bTy4OInPBPLfPDWDdMk=', 'LUYEOHmRZ4iocP3J67VJ5NHj4a5J1HMtRhTGlnASBVs=', 'LUYEOHmRZ4iocP3J67VJ5M6xyJ/c2BrCHCcNB6ng7Us=', 'LUYEOHmRZ4iocP3J67VJ5KN/a8w07fa37MwcXjRS9uM=', 'LUYEOHmRZ4iocP3J67VJ5OoDjKt0DIcRqJb0o16q12I=', 'LUYEOHmRZ4iocP3J67VJ5KH0MDFP9mNiCqYFzH84+1M=', 'LUYEOHmRZ4iocP3J67VJ5I4abDYRpl17Z91ios+hPck=', 'LUYEOHmRZ4iocP3J67VJ5Gxev5W/tPnVzUYsq+UF1Gk=', 'LUYEOHmRZ4iocP3J67VJ5Cm15kYPyCZypflC+5DoTQE=', 'LUYEOHmRZ4iocP3J67VJ5LBUwdXniqD96rnmy7BVb5A=', 'LUYEOHmRZ4iocP3J67VJ5MjLVH9M0hqjjDm1UdxqlTw=', 'LUYEOHmRZ4iocP3J67VJ5IyPe69gU04IZleqah9R2Dc=']);
 var $elm$core$String$concat = function (strings) {
 	return A2($elm$core$String$join, '', strings);
 };
@@ -12946,6 +12946,45 @@ var $author$project$Types$RSVPButton = function (a) {
 };
 var $elm$html$Html$br = _VirtualDom_node('br');
 var $elm$html$Html$button = _VirtualDom_node('button');
+var $author$project$Karakters$allekarakters = _List_fromArray(
+	[
+		_Utils_Tuple3('mr. Justus ten Have', 'ten have', 'De discrete advocaat'),
+		_Utils_Tuple3('Theodoor (Theo) van Aerden', 'theodoor', 'De afgunstige broer'),
+		_Utils_Tuple3('Marta van Aerden', 'marta', 'De toegewijde echtgenote'),
+		_Utils_Tuple3('Susanna van Beek', 'susanna', 'De kordate onderneemster'),
+		_Utils_Tuple3('Gijsbert van Beek', 'gijsbert', 'De wankele apotheker'),
+		_Utils_Tuple3('Gerrit van Kessel', 'gerrit', 'De kwistige advocaat'),
+		_Utils_Tuple3('Rosalie Smeets', 'rosalie', 'De ongrijpbare actrice'),
+		_Utils_Tuple3('Michiel Smeets', 'michael', 'De rokkenjagende acteur'),
+		_Utils_Tuple3('Margareta (Margje) Geerlings', 'geerlings', 'De bescheiden gouvernante'),
+		_Utils_Tuple3('Willem Brouwer', 'brouwer', 'De plichtsgetrouwe butler'),
+		_Utils_Tuple3('Janne de Vries', 'janne', 'De oplettende keukenmeid'),
+		_Utils_Tuple3('Alexander Goedhart', 'alexander', 'De begerige verzamelaar'),
+		_Utils_Tuple3('dr. Lodewijk van Lier', 'dr lodewijk', 'De achteloze dokter'),
+		_Utils_Tuple3('Zuster Elisabeth Koster', 'elisabeth', 'De ijverige zuster'),
+		_Utils_Tuple3('Bernard van Houten', 'bernard', 'De malafide compagnon'),
+		_Utils_Tuple3('Eduard (Eddie) van Loon', 'eduard', 'De vasthoudende journalist'),
+		_Utils_Tuple3('Pastoor Johannes (Jan) Hendriks', 'hendriks', 'De beschonken priester'),
+		_Utils_Tuple3('Julian van Mersbergen', 'julian', 'De baatzuchtige protegé')
+	]);
+var $author$project$Karakters$id2namedis = function (id) {
+	var _v0 = A2(
+		$elm$core$List$filter,
+		function (_v1) {
+			var id2 = _v1.b;
+			return _Utils_eq(id, id2);
+		},
+		$author$project$Karakters$allekarakters);
+	if (_v0.b && (!_v0.b.b)) {
+		var _v2 = _v0.a;
+		var name = _v2.a;
+		var dis = _v2.c;
+		return $elm$core$Maybe$Just(
+			_Utils_Tuple2(name, dis));
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
+};
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
@@ -13030,7 +13069,7 @@ var $author$project$Main$viewFirstPage = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('\r\n          Je hebt een persoonlijk wachtwoord gekregen: hiermee kun je je karakter ontsleutelen. Je krijgt alle informatie die je nodig hebt om jezelf vrij te pleiten (of verdacht te maken).\r\n          Voel je vrij om je zo veel of weinig in te leven in je karaker als je wilt en leuk vindt. Ga all out met een kostuum of kom alleen met de intentie om te winnen — alles is goed!\r\n        ')
+								$elm$html$Html$text('\r\n          Je hebt een persoonlijk wachtwoord gekregen: hiermee kun je je karakter kiezen. Je krijgt alle informatie die je nodig hebt om jezelf vrij te pleiten (of verdacht te maken).\r\n          Voel je vrij om je zo veel of weinig in te leven in je karaker als je wilt en leuk vindt. Ga all out met een kostuum of kom alleen met de intentie om te winnen — alles is goed!\r\n        ')
 							]))
 					])),
 				A2(
@@ -13107,13 +13146,20 @@ var $author$project$Main$viewFirstPage = function (model) {
 									return $elm$html$Html$text('Je hebt nog geen karakter gekozen. Kies er een op de vorige pagina!');
 								} else {
 									var _v2 = _v1.a;
-									var name = _v2.a;
-									return $elm$html$Html$text(
-										A2(
-											$elm$core$String$join,
-											'',
-											_List_fromArray(
-												['Je bent ', name, '! Klik op je polaroid voor meer informatie.'])));
+									var id = _v2.a;
+									var _v3 = $author$project$Karakters$id2namedis(id);
+									if (_v3.$ === 'Just') {
+										var _v4 = _v3.a;
+										var name = _v4.a;
+										return $elm$html$Html$text(
+											A2(
+												$elm$core$String$join,
+												'',
+												_List_fromArray(
+													['Je bent ', name, '! Klik op je polaroid voor jouw geheime informatie. Zorg dat je dit tijdens het feestje paraat hebt!'])));
+									} else {
+										return $elm$html$Html$text('er gaat iets fout');
+									}
 								}
 							}()
 							]);
@@ -13169,45 +13215,6 @@ var $author$project$Types$gethover = function (model) {
 	}
 };
 var $billstclair$elm_dialog$Dialog$hidden = false;
-var $author$project$Karakters$allekarakters = _List_fromArray(
-	[
-		_Utils_Tuple3('mr. Justus ten Have', 'ten have', 'De discrete advocaat'),
-		_Utils_Tuple3('Theodoor (Theo) van Aerden', 'theodoor', 'De afgunstige broer'),
-		_Utils_Tuple3('Marta van Aerden', 'marta', 'De toegewijde echtgenote'),
-		_Utils_Tuple3('Susanna van Beek', 'susanna', 'De kordate onderneemster'),
-		_Utils_Tuple3('Gijsbert van Beek', 'gijsbert', 'De wankele apotheker'),
-		_Utils_Tuple3('Gerrit van Kessel', 'gerrit', 'De kwistige advocaat'),
-		_Utils_Tuple3('Rosalie Smeets', 'rosalie', 'De ongrijpbare actrice'),
-		_Utils_Tuple3('Michiel Smeets', 'michael', 'De rokkenjagende acteur'),
-		_Utils_Tuple3('Margareta (Margje) Geerlings', 'geerlings', 'De bescheiden gouvernante'),
-		_Utils_Tuple3('Willem Brouwer', 'brouwer', 'De plichtsgetrouwe butler'),
-		_Utils_Tuple3('Janne de Vries', 'janne', 'De oplettende keukenmeid'),
-		_Utils_Tuple3('Alexander Goedhart', 'alexander', 'De begerige verzamelaar'),
-		_Utils_Tuple3('dr. Lodewijk van Lier', 'dr lodewijk', 'De achteloze dokter'),
-		_Utils_Tuple3('Zuster Elisabeth Koster', 'elisabeth', 'De ijverige zuster'),
-		_Utils_Tuple3('Bernard van Houten', 'bernard', 'De malafide compagnon'),
-		_Utils_Tuple3('Eduard (Eddie) van Loon', 'eduard', 'De vasthoudende journalist'),
-		_Utils_Tuple3('Pastoor Johannes (Jan) Hendriks', 'hendriks', 'De beschonken priester'),
-		_Utils_Tuple3('Julian van Mersbergen', 'julian', 'De baatzuchtige protegé')
-	]);
-var $author$project$Karakters$id2namedis = function (id) {
-	var _v0 = A2(
-		$elm$core$List$filter,
-		function (_v1) {
-			var id2 = _v1.b;
-			return _Utils_eq(id, id2);
-		},
-		$author$project$Karakters$allekarakters);
-	if (_v0.b && (!_v0.b.b)) {
-		var _v2 = _v0.a;
-		var name = _v2.a;
-		var dis = _v2.c;
-		return $elm$core$Maybe$Just(
-			_Utils_Tuple2(name, dis));
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
 var $elm_community$maybe_extra$Maybe$Extra$isJust = function (m) {
 	if (m.$ === 'Nothing') {
 		return false;

@@ -163,7 +163,7 @@ viewFirstPage : Model -> Html Msg
 viewFirstPage model = div [class "about-cols"]
   [ div [class "about-col", class "helveticalarge"]
         [p [] [text """
-          Je hebt een persoonlijk wachtwoord gekregen: hiermee kun je je karakter ontsleutelen. Je krijgt alle informatie die je nodig hebt om jezelf vrij te pleiten (of verdacht te maken).
+          Je hebt een persoonlijk wachtwoord gekregen: hiermee kun je je karakter kiezen. Je krijgt alle informatie die je nodig hebt om jezelf vrij te pleiten (of verdacht te maken).
           Voel je vrij om je zo veel of weinig in te leven in je karaker als je wilt en leuk vindt. Ga all out met een kostuum of kom alleen met de intentie om te winnen — alles is goed!
         """]]
   , div [class "about-col", class "helveticalarge"]
@@ -186,7 +186,9 @@ viewFirstPage model = div [class "about-cols"]
           , br [] []
           , case m.charstory of
               Nothing -> text "Je hebt nog geen karakter gekozen. Kies er een op de vorige pagina!"
-              Just (name, _) -> text (String.join "" ["Je bent ", name, "! Klik op je polaroid voor meer informatie."])
+              Just (id, _) -> case id2namedis id of
+                Just (name, _) -> text (String.join "" ["Je bent ", name, "! Klik op je polaroid voor jouw geheime informatie. Zorg dat je dit tijdens het feestje paraat hebt!"])
+                Nothing -> text "er gaat iets fout"
           ]
       )
   ]
