@@ -143,7 +143,7 @@ view : Audio.AudioData -> Model -> Html Msg
 view _ model = div []
   [ 
     section
-      [ id "karakter", class "bar-section"]
+      [ id "personage", class "bar-section"]
       [ div [class "bar-bg", attribute "data-speed" "0.45", style "background-image" "url(\'images/vijver.jpeg\')"] []
       , div [class "bar-overlay"] []
       , div [class "section-content-wide", relwidth 80] [viewSecondPage model]
@@ -163,7 +163,7 @@ viewFirstPage : Model -> Html Msg
 viewFirstPage model = div [class "about-cols"]
   [ div [class "about-col", class "helveticalarge"]
         [p [] [text """
-          Je hebt een persoonlijk wachtwoord gekregen: hiermee kun je je karakter kiezen. Je krijgt alle informatie die je nodig hebt om jezelf vrij te pleiten (of verdacht te maken).
+          Je hebt een persoonlijk wachtwoord gekregen: hiermee kun je je personage kiezen. Je krijgt alle informatie die je nodig hebt om jezelf vrij te pleiten (of verdacht te maken).
           Voel je vrij om je zo veel of weinig in te leven in je karaker als je wilt en leuk vindt. Ga all out met een kostuum of kom alleen met de intentie om te winnen — alles is goed!
         """]]
   , div [class "about-col", class "helveticalarge"]
@@ -185,7 +185,7 @@ viewFirstPage model = div [class "about-cols"]
           , br [] []
           , br [] []
           , case m.charstory of
-              Nothing -> text "Je hebt nog geen karakter gekozen. Kies er een op de vorige pagina!"
+              Nothing -> text "Je hebt nog geen personage gekozen. Kies er een op de vorige pagina!"
               Just (id, _) -> case id2namedis id of
                 Just (name, _) -> text (String.join "" ["Je bent ", name, "! Klik op je polaroid voor jouw geheime informatie. Zorg dat je dit tijdens het feestje paraat hebt!"])
                 Nothing -> text "er gaat iets fout"
@@ -221,7 +221,7 @@ viewSecondPage model = let youarealreadychar = case model of
     )
     ++
     (case Maybe.andThen id2namedis (Maybe.Extra.orList [gethover model, youarealreadychar]) of
-      Nothing -> [p [style "font-size" "xx-large"] [text "Kies een karakter"], br [] [], div [style "font-size" "xx-large", style "font-family" "hattinand", style "color" "rgba(0,0,0,0)"] [text "I'm invisible!"]]
+      Nothing -> [p [style "font-size" "xx-large"] [text "Kies een personage"], br [] [], div [style "font-size" "xx-large", style "font-family" "hattinand", style "color" "rgba(0,0,0,0)"] [text "I'm invisible!"]]
       Just (name, dis)   -> [ p [style "font-size" "xx-large"] [text name]
                             , br [] []
                             , p [style "font-size" "xx-large", style "font-family" "hattinand"] [text dis]])
