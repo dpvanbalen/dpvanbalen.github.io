@@ -20,6 +20,10 @@ import Dialog
 import Maybe.Extra
 import Maybe
 import Utils exposing (..)
+import String
+import List
+import List.Extra
+
 import Karakters exposing (..)
 
 -- PORTS
@@ -236,10 +240,10 @@ viewSecondPage model = let youarealreadychar = case model of
               { styles = [ ( "width", "40%" ), ("color", "black"), ("class","helveticalarge") ]
               , title = case m.charstory of
                   Nothing -> "Bevestig je keuze"
-                  Just (char,_) -> char
-              , content = [ text (case m.charstory of
+                  Just (char,_) -> name
+              , content = [div [style "font-family" "Arial"] (breaktext (case m.charstory of
                   Nothing -> (String.join " " ["Weet je zeker dat je", name, "wil kiezen?"])
-                  Just (char, story) -> Maybe.withDefault "" (getSecret char story)) ]
+                  Just (char, story) -> Maybe.withDefault "" (getSecret char story)))]
               , actionBar = case m.charstory of
                 Nothing ->  [ dialogButton "Nee denk het niet" (ChooseChar "")
                             , text "   "
@@ -275,3 +279,6 @@ audio _ model =
 
 
 
+
+breaktext : String -> List (Html msg)
+breaktext = String.lines >> List.map text >> List.intersperse (br [] [])
